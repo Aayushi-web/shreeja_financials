@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeja Financials | Login</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <body>
+<div class="hamburger" onclick="toggleSidebar()">
+    <div class="container">
+        <!-- Left Side -->
+        <div class="left-panel">
+            <div class="brand">
+                <h1>📈 Shreeja Financials</h1>
+                <p>Smart Portfolio Management</p>
+            </div>
+            <div class="tagline">
+    <h2>Manage. Track. Grow.</h2>
+    <p>Your investments, beautifully organized and always within reach.</p>
+</div>
+<div class="stats-row">
+    <div class="stat">
+        <h3>100%</h3>
+        <p>Secure</p>
+    </div>
+    <div class="stat">
+        <h3>Live</h3>
+        <p>Updates</p>
+    </div>
+    <div class="stat">
+        <h3>24/7</h3>
+        <p>Access</p>
+    </div>
+</div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="right-panel">
+            <div class="login-box">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Login to your account</p>
+
+                <div id="error-msg" class="error-msg hidden"></div>
+
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="text" id="user_id" placeholder="Enter your User ID" />
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Enter your password" />
+                        <span id="toggle-password">👁️</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="remember">
+                        <input type="checkbox" id="remember" /> Remember Me
+                    </label>
+                    <a href="#" class="forgot">Forgot Password?</a>
+                </div>
+
+                <button id="login-btn" onclick="handleLogin()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

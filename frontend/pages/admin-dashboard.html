@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeja Financials | Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">📈 Shreeja Financials</div>
+            <nav>
+                <a href="#" class="nav-item active" onclick="showSection('dashboard', event)">
+                    🏠 Dashboard
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('investors', event)">
+                    👥 Investors
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('portfolio', event)">
+                    📊 Portfolio
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('profile', event)">
+                    👤 Profile
+                </a>
+            </nav>
+            <a href="#" class="logout-btn" onclick="logout()">🚪 Logout</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+
+            <!-- Top Bar -->
+            <div class="topbar">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div class="hamburger" style="display:none" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <h2 id="page-title">My Portfolio</h2>
+    </div>
+    <div class="user-info">
+        <div class="user-details">
+            <span id="admin-name">Admin</span>
+            <small id="admin-email"></small>
+        </div>
+        <div class="avatar">A</div>
+    </div>
+</div>
+
+            <!-- DASHBOARD SECTION -->
+            <section id="section-dashboard">
+                <!-- Welcome Banner -->
+<div class="welcome-banner">
+    <div>
+        <h3>Welcome back, <span id="welcome-name">Admin</span>! 👋</h3>
+        <p>Here's what's happening with your portfolios today.</p>
+    </div>
+    <div class="banner-icon">📈</div>
+</div>
+                <!-- Stats Cards -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon blue">👥</div>
+                        <div class="card-info">
+                            <p>Total Investors</p>
+                            <h3 id="total-investors">0</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon green">📊</div>
+                        <div class="card-info">
+                            <p>Total Portfolios</p>
+                            <h3 id="total-portfolios">0</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon yellow">💰</div>
+                        <div class="card-info">
+                            <p>Total Invested</p>
+                            <h3 id="total-invested">₹0</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon purple">📈</div>
+                        <div class="card-info">
+                            <p>Current Value</p>
+                            <h3 id="total-current">₹0</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon red">📉</div>
+                        <div class="card-info">
+                            <p>Total Profit/Loss</p>
+                            <h3 id="total-pl">₹0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-box">
+                        <h3>Portfolio Distribution</h3>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Investment vs Current Value</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INVESTORS SECTION -->
+            <section id="section-investors" class="hidden">
+                <div class="section-header">
+                    <input type="text" id="search-investor" placeholder="🔍 Search investor..." oninput="searchInvestors()" />
+                    <button onclick="openInvestorModal()">+ Add Investor</button>
+                </div>
+                <div class="table-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>User ID</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investors-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PORTFOLIO SECTION -->
+            <section id="section-portfolio" class="hidden">
+                <div class="section-header">
+                    <input type="text" id="search-portfolio" placeholder="🔍 Search shares..." oninput="searchPortfolios()" />
+                    <button onclick="openPortfolioModal()">+ Add Portfolio</button>
+                </div>
+                <div class="table-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Investor</th>
+                                <th>Share Name</th>
+                                <th>Quantity</th>
+                                <th>Buy Price</th>
+                                <th>Invested</th>
+                                <th>Current Value</th>
+                                <th>Return</th>
+                                <th>Return %</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolio-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PROFILE SECTION -->
+            <section id="section-profile" class="hidden">
+                <div class="profile-box">
+                    <div class="profile-avatar">A</div>
+                    <h2 id="profile-name">System Admin</h2>
+                    <p id="profile-email">admin@portfolio.com</p>
+                    <p class="profile-role">Administrator</p>
+                </div>
+            </section>
+<!-- Footer -->
+<div class="footer">
+    Developed with ❤️ by <a href="https://www.linkedin.com/in/mishraaayushi/" target="_blank"><strong>Aayushi</strong></a>
+</div>
+        </main>
+    </div>
+
+    <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
+
+    <!-- Investor Modal -->
+    <div id="investor-modal" class="modal hidden">
+        <div class="modal-box">
+            <h3 id="investor-modal-title">Add Investor</h3>
+            <input type="hidden" id="investor-id" />
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="inv-name" placeholder="Full Name" />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="inv-email" placeholder="Email" />
+            </div>
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="inv-userid" placeholder="User ID" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="inv-password" placeholder="Password" />
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" id="inv-phone" placeholder="Phone Number" />
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="inv-status">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveInvestor()">Save</button>
+                <button class="cancel" onclick="closeModal('investor-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Modal -->
+    <div id="portfolio-modal" class="modal hidden">
+        <div class="modal-box">
+            <h3 id="portfolio-modal-title">Add Portfolio</h3>
+            <input type="hidden" id="portfolio-id" />
+            <div class="form-group">
+                <label>Investor</label>
+                <select id="port-investor"></select>
+            </div>
+            <div class="form-group">
+                <label>Share Name</label>
+                <input type="text" id="port-share" placeholder="Share Name" />
+            </div>
+            <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" id="port-qty" placeholder="Quantity" />
+            </div>
+            <div class="form-group">
+    <label>Buy Price (₹)</label>
+    <input type="number" id="port-buyprice" placeholder="Buy Price per share" />
+</div>
+            <div class="form-group">
+                <label>Amount Invested (₹)</label>
+                <input type="number" id="port-invested" placeholder="Amount Invested" />
+            </div>
+            <div class="form-group">
+                <label>Current Value (₹)</label>
+                <input type="number" id="port-current" placeholder="Current Value" />
+            </div>
+            <div class="modal-actions">
+                <button onclick="savePortfolio()">Save</button>
+                <button class="cancel" onclick="closeModal('portfolio-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>
