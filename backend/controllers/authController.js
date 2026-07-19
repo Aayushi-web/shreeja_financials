@@ -9,7 +9,7 @@ exports.login = async (req, res) => {
 
         // 1. Check if user exists
         const [rows] = await db.query(
-            'SELECT * FROM users WHERE user_id = ? AND status = "active"',
+            "SELECT * FROM users WHERE user_id = ? AND status = 'active'",
             [user_id]
         );
 
@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const [rows] = await db.query(
-            'SELECT id, name, email, role FROM users WHERE id = ? AND status = "active"',
+            "SELECT id, name, email, role FROM users WHERE id = ? AND status = 'active'",
             [req.user.id]
         );
 

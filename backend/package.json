@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
-},
+    "dev": "nodemon server.js",
+    "createdb": "node scripts/createdb.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

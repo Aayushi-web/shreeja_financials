@@ -1,4 +1,3 @@
-const API = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 

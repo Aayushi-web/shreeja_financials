@@ -74,7 +74,7 @@ exports.deleteShare = async (req, res) => {
 exports.getDashboardStats = async (req, res) => {
     try {
         const [[investorCount]] = await db.query(
-            'SELECT COUNT(*) as total FROM users WHERE role = "investor"'
+            "SELECT COUNT(*) as total FROM users WHERE role = 'investor'"
         );
         const [[portfolioCount]] = await db.query(
             'SELECT COUNT(*) as total FROM portfolios'
