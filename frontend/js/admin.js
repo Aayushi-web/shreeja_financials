@@ -112,90 +112,131 @@ let pieChartInstance = null;
 let barChartInstance = null;
 
 async function loadCharts() {
-    const portfolios = await api('GET', '/portfolios');
+    const pieSkeleton = document.getElementById('pieChart-skeleton');
+    const barSkeleton = document.getElementById('barChart-skeleton');
+    const pieCanvas = document.getElementById('pieChart');
+    const barCanvas = document.getElementById('barChart');
 
-    const investorMap = {};
-    const investedMap = {};
+    if (pieSkeleton) {
+        pieSkeleton.style.display = 'block';
+        pieSkeleton.innerHTML = `
+            <div class="skeleton skeleton-chart-circle"></div>
+            <div class="skeleton-chart-legend">
+                <span class="skeleton skeleton-badge"></span>
+                <span class="skeleton skeleton-badge"></span>
+                <span class="skeleton skeleton-badge"></span>
+            </div>
+        `;
+    }
+    if (barSkeleton) {
+        barSkeleton.style.display = 'block';
+        barSkeleton.innerHTML = `
+            <div class="skeleton-chart-bars">
+                <div class="skeleton skeleton-chart-bar" style="height: 65%;"></div>
+                <div class="skeleton skeleton-chart-bar" style="height: 85%;"></div>
+                <div class="skeleton skeleton-chart-bar" style="height: 45%;"></div>
+                <div class="skeleton skeleton-chart-bar" style="height: 75%;"></div>
+                <div class="skeleton skeleton-chart-bar" style="height: 90%;"></div>
+            </div>
+        `;
+    }
+    if (pieCanvas) pieCanvas.style.display = 'none';
+    if (barCanvas) barCanvas.style.display = 'none';
 
-    portfolios.forEach(p => {
-        if (!investorMap[p.investor_name]) {
-            investorMap[p.investor_name] = 0;
-            investedMap[p.investor_name] = 0;
-        }
-        investorMap[p.investor_name] += Number(p.current_value);
-        investedMap[p.investor_name] += Number(p.amount_invested);
-    });
+    try {
+        const portfolios = await api('GET', '/portfolios');
 
-    const labels = Object.keys(investorMap);
-    const currentValues = Object.values(investorMap);
-    const investedValues = Object.values(investedMap);
+        const investorMap = {};
+        const investedMap = {};
 
-    if (pieChartInstance) pieChartInstance.destroy();
-    pieChartInstance = new Chart(document.getElementById('pieChart'), {
-        type: 'doughnut',
-        data: {
-            labels,
-            datasets: [{
-                data: currentValues,
-                backgroundColor: ['#22C55E', '#1A3D5C', '#f59e0b', '#8b5cf6', '#ef4444'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 20, font: { size: 12 } }
+        portfolios.forEach(p => {
+            if (!investorMap[p.investor_name]) {
+                investorMap[p.investor_name] = 0;
+                investedMap[p.investor_name] = 0;
+            }
+            investorMap[p.investor_name] += Number(p.current_value);
+            investedMap[p.investor_name] += Number(p.amount_invested);
+        });
+
+        const labels = Object.keys(investorMap);
+        const currentValues = Object.values(investorMap);
+        const investedValues = Object.values(investedMap);
+
+        if (pieSkeleton) pieSkeleton.style.display = 'none';
+        if (barSkeleton) barSkeleton.style.display = 'none';
+        if (pieCanvas) pieCanvas.style.display = 'block';
+        if (barCanvas) barCanvas.style.display = 'block';
+
+        if (pieChartInstance) pieChartInstance.destroy();
+        pieChartInstance = new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: currentValues,
+                    backgroundColor: ['#22C55E', '#1A3D5C', '#f59e0b', '#8b5cf6', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, font: { size: 12 } }
+                    }
                 }
             }
-        }
-    });
+        });
 
-    if (barChartInstance) barChartInstance.destroy();
-    barChartInstance = new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Invested',
-                    data: investedValues,
-                    backgroundColor: '#1A3D5C',
-                    borderRadius: 6
-                },
-                {
-                    label: 'Current Value',
-                    data: currentValues,
-                    backgroundColor: '#22C55E',
-                    borderRadius: 6
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { padding: 20, font: { size: 12 } }
-                }
+        if (barChartInstance) barChartInstance.destroy();
+        barChartInstance = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Invested',
+                        data: investedValues,
+                        backgroundColor: '#1A3D5C',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Current Value',
+                        data: currentValues,
+                        backgroundColor: '#22C55E',
+                        borderRadius: 6
+                    }
+                ]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: {
-                        callback: function(value) {
-                            return '₹' + value.toLocaleString('en-IN');
-                        }
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { padding: 20, font: { size: 12 } }
                     }
                 },
-                x: { grid: { display: false } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString('en-IN');
+                            }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
             }
-        }
-    });
+        });
+    } catch (err) {
+        if (pieSkeleton) pieSkeleton.innerHTML = `<p style="text-align:center;padding:40px 0;color:#dc2626">${err.message || 'Failed to load chart'}</p>`;
+        if (barSkeleton) barSkeleton.innerHTML = `<p style="text-align:center;padding:40px 0;color:#dc2626">${err.message || 'Failed to load chart'}</p>`;
+    }
 }
 
 // ===== INVESTORS =====

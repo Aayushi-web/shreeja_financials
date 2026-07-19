@@ -608,6 +608,40 @@ tr:hover td {
     border-radius: 12px;
 }
 
+.skeleton-chart-container {
+    width: 100%;
+    padding: 10px 0;
+}
+
+.skeleton-chart-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin: 15px auto;
+    display: block;
+}
+
+.skeleton-chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.skeleton-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 200px;
+    padding: 15px 10px 0;
+    gap: 14px;
+}
+
+.skeleton-chart-bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+}
+
 /* ===== MOBILE NAV ===== */
 .hamburger {
     display: none;

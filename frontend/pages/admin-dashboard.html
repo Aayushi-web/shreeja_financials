@@ -106,11 +106,28 @@
                 <div class="charts-grid">
                     <div class="chart-box">
                         <h3>Portfolio Distribution</h3>
-                        <canvas id="pieChart"></canvas>
+                        <div id="pieChart-skeleton" class="skeleton-chart-container">
+                            <div class="skeleton skeleton-chart-circle"></div>
+                            <div class="skeleton-chart-legend">
+                                <span class="skeleton skeleton-badge"></span>
+                                <span class="skeleton skeleton-badge"></span>
+                                <span class="skeleton skeleton-badge"></span>
+                            </div>
+                        </div>
+                        <canvas id="pieChart" style="display: none;"></canvas>
                     </div>
                     <div class="chart-box">
                         <h3>Investment vs Current Value</h3>
-                        <canvas id="barChart"></canvas>
+                        <div id="barChart-skeleton" class="skeleton-chart-container">
+                            <div class="skeleton-chart-bars">
+                                <div class="skeleton skeleton-chart-bar" style="height: 65%;"></div>
+                                <div class="skeleton skeleton-chart-bar" style="height: 85%;"></div>
+                                <div class="skeleton skeleton-chart-bar" style="height: 45%;"></div>
+                                <div class="skeleton skeleton-chart-bar" style="height: 75%;"></div>
+                                <div class="skeleton skeleton-chart-bar" style="height: 90%;"></div>
+                            </div>
+                        </div>
+                        <canvas id="barChart" style="display: none;"></canvas>
                     </div>
                 </div>
             </section>
