@@ -585,6 +585,19 @@ async function handleChangePassword(event) {
     }
 }
 
+// ===== PASSWORD VISIBILITY TOGGLE =====
+function togglePasswordVisibility(inputId, iconEl) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (iconEl) iconEl.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        if (iconEl) iconEl.textContent = '👁️';
+    }
+}
+
 // ===== INIT =====
 loadDashboard();
 loadProfile();

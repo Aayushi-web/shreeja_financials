@@ -288,16 +288,25 @@
                             <form id="password-update-form" onsubmit="handleChangePassword(event)">
                                 <div class="form-group">
                                     <label>Current Password</label>
-                                    <input type="password" id="current-password" required placeholder="Enter current password" />
+                                    <div class="password-wrapper">
+                                        <input type="password" id="current-password" required placeholder="Enter current password" />
+                                        <span class="toggle-password-icon" onclick="togglePasswordVisibility('current-password', this)">👁️</span>
+                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>New Password</label>
-                                        <input type="password" id="new-password" required minlength="6" placeholder="Min. 6 characters" />
+                                        <div class="password-wrapper">
+                                            <input type="password" id="new-password" required minlength="6" placeholder="Min. 6 characters" />
+                                            <span class="toggle-password-icon" onclick="togglePasswordVisibility('new-password', this)">👁️</span>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label>Confirm New Password</label>
-                                        <input type="password" id="confirm-password" required minlength="6" placeholder="Re-enter new password" />
+                                        <div class="password-wrapper">
+                                            <input type="password" id="confirm-password" required minlength="6" placeholder="Re-enter new password" />
+                                            <span class="toggle-password-icon" onclick="togglePasswordVisibility('confirm-password', this)">👁️</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-actions">
@@ -336,7 +345,10 @@
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="inv-password" placeholder="Password" />
+                <div class="password-wrapper">
+                    <input type="password" id="inv-password" placeholder="Password" />
+                    <span class="toggle-password-icon" onclick="togglePasswordVisibility('inv-password', this)">👁️</span>
+                </div>
             </div>
             <div class="form-group">
                 <label>Phone</label>

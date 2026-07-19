@@ -1,8 +1,14 @@
 
 // Show/Hide password
-document.getElementById('toggle-password').addEventListener('click', () => {
+document.getElementById('toggle-password').addEventListener('click', function() {
     const pwd = document.getElementById('password');
-    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        this.textContent = '🙈';
+    } else {
+        pwd.type = 'password';
+        this.textContent = '👁️';
+    }
 });
 
 // Handle Login

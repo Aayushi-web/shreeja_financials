@@ -46,8 +46,8 @@ async function createDatabase() {
         console.log('🌱 Populating initial data...');
 
         // Hash passwords
-        const adminPassword = await bcrypt.hash('admin123', 10);
-        const investorPassword = await bcrypt.hash('investor123', 10);
+        const adminPassword = await bcrypt.hash('Admin@123', 10);
+        const investorPassword = await bcrypt.hash('Investor@123', 10);
 
         // Insert Admin
         const [adminResult] = await db.query(
