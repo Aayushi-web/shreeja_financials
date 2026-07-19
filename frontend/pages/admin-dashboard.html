@@ -223,11 +223,89 @@
 
             <!-- PROFILE SECTION -->
             <section id="section-profile" class="hidden">
-                <div class="profile-box">
-                    <div class="profile-avatar">A</div>
-                    <h2 id="profile-name">System Admin</h2>
-                    <p id="profile-email">admin@portfolio.com</p>
-                    <p class="profile-role">Administrator</p>
+                <div class="profile-grid">
+                    <div class="profile-box">
+                        <div class="profile-avatar" id="profile-avatar">A</div>
+                        <h2 id="profile-name">System Admin</h2>
+                        <p id="profile-email">admin@portfolio.com</p>
+                        <p class="profile-role">Administrator</p>
+                        <div class="profile-meta">
+                            <div class="profile-meta-item">
+                                <span>Username / Login ID</span>
+                                <strong id="profile-username-display">admin</strong>
+                            </div>
+                            <div class="profile-meta-item">
+                                <span>Phone Number</span>
+                                <strong id="profile-phone-display">-</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-settings">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon">👤</div>
+                                <div>
+                                    <h3>Account & Username Details</h3>
+                                    <p>Update your display name, username, and contact information</p>
+                                </div>
+                            </div>
+                            <form id="profile-update-form" onsubmit="handleUpdateProfile(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Display Name</label>
+                                        <input type="text" id="setting-name" required placeholder="Full Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Login Username (user_id)</label>
+                                        <input type="text" id="setting-username" required placeholder="e.g. admin" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Email Address</label>
+                                        <input type="email" id="setting-email" required placeholder="admin@example.com" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="text" id="setting-phone" placeholder="+91 9876543210" />
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-save" id="btn-save-profile">Save Profile Changes</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-icon">🔒</div>
+                                <div>
+                                    <h3>Change Password</h3>
+                                    <p>Ensure your account is using a strong password to stay secure</p>
+                                </div>
+                            </div>
+                            <form id="password-update-form" onsubmit="handleChangePassword(event)">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="current-password" required placeholder="Enter current password" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <input type="password" id="new-password" required minlength="6" placeholder="Min. 6 characters" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <input type="password" id="confirm-password" required minlength="6" placeholder="Re-enter new password" />
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-save btn-password" id="btn-save-password">Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </section>
 <!-- Footer -->

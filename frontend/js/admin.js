@@ -34,6 +34,7 @@ function showSection(section, event) {
     if (section === 'dashboard') loadDashboard();
     if (section === 'investors') loadInvestors();
     if (section === 'portfolio') loadPortfolios();
+    if (section === 'profile') loadProfile();
 }
 
 function logout() {
@@ -487,5 +488,103 @@ function closeModal(id) {
     document.getElementById(id).classList.add('hidden');
 }
 
+// ===== PROFILE MANAGEMENT =====
+async function loadProfile() {
+    try {
+        const data = await api('GET', '/auth/me');
+        if (data && data.user) {
+            const u = data.user;
+            localStorage.setItem('user', JSON.stringify(u));
+            setText('admin-name', u.name || 'Admin');
+            setText('admin-email', u.email || '');
+            setText('profile-name', u.name || 'Admin');
+            setText('profile-email', u.email || '');
+            setText('welcome-name', u.name || 'Admin');
+            setText('profile-username-display', u.user_id || 'admin');
+            setText('profile-phone-display', u.phone || '-');
+
+            const avatarEl = document.getElementById('profile-avatar');
+            if (avatarEl && u.name) avatarEl.textContent = u.name.charAt(0).toUpperCase();
+
+            const inputName = document.getElementById('setting-name');
+            const inputUsername = document.getElementById('setting-username');
+            const inputEmail = document.getElementById('setting-email');
+            const inputPhone = document.getElementById('setting-phone');
+
+            if (inputName) inputName.value = u.name || '';
+            if (inputUsername) inputUsername.value = u.user_id || '';
+            if (inputEmail) inputEmail.value = u.email || '';
+            if (inputPhone) inputPhone.value = u.phone || '';
+        }
+    } catch (err) {
+        console.error('Error loading profile:', err);
+    }
+}
+
+async function handleUpdateProfile(event) {
+    event.preventDefault();
+    const btn = document.getElementById('btn-save-profile');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+    try {
+        const body = {
+            name: document.getElementById('setting-name').value.trim(),
+            user_id: document.getElementById('setting-username').value.trim(),
+            email: document.getElementById('setting-email').value.trim(),
+            phone: document.getElementById('setting-phone').value.trim()
+        };
+
+        const res = await api('PUT', '/auth/profile', body);
+        if (res.message && !res.user) {
+            alert(res.message);
+        } else if (res.user) {
+            if (res.token) localStorage.setItem('token', res.token);
+            localStorage.setItem('user', JSON.stringify(res.user));
+            alert('Profile and username updated successfully!');
+            loadProfile();
+        } else {
+            alert(res.message || 'Failed to update profile');
+        }
+    } catch (err) {
+        alert('Error updating profile: ' + err.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Save Profile Changes'; }
+    }
+}
+
+async function handleChangePassword(event) {
+    event.preventDefault();
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+        alert('New password and confirm password do not match!');
+        return;
+    }
+
+    const btn = document.getElementById('btn-save-password');
+    if (btn) { btn.disabled = true; btn.textContent = 'Updating...'; }
+
+    try {
+        const res = await api('PUT', '/auth/password', {
+            current_password: currentPassword,
+            new_password: newPassword
+        });
+
+        if (res.message && res.message.toLowerCase().includes('success')) {
+            alert(res.message);
+            document.getElementById('password-update-form').reset();
+        } else {
+            alert(res.message || 'Failed to change password');
+        }
+    } catch (err) {
+        alert('Error changing password: ' + err.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Update Password'; }
+    }
+}
+
 // ===== INIT =====
 loadDashboard();
+loadProfile();

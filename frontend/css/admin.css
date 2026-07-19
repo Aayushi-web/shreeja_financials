@@ -523,15 +523,25 @@ tr:hover td {
     background: #e2e8f0;
 }
 
-/* ===== PROFILE ===== */
+/* ===== PROFILE GRID & SETTINGS ===== */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1250px;
+    margin: 0 auto;
+    align-items: start;
+}
+
 .profile-box {
-    margin: 40px auto;
+    margin: 0;
     background: white;
     border-radius: 20px;
-    padding: 50px 40px;
-    width: 420px;
+    padding: 40px 30px;
+    width: 100%;
     text-align: center;
-    box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.06);
     border: 1px solid rgba(0,0,0,0.04);
 }
 
@@ -551,7 +561,7 @@ tr:hover td {
 }
 
 .profile-box h2 {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     margin-bottom: 6px;
     color: #0A1E2E;
 }
@@ -570,6 +580,124 @@ tr:hover td {
     border-radius: 20px;
     font-size: 0.85rem !important;
     font-weight: 700 !important;
+}
+
+.profile-meta {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.profile-meta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+}
+
+.profile-meta-item span {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.profile-meta-item strong {
+    color: #0A1E2E;
+    font-weight: 700;
+    background: #f8fafc;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.profile-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8fafc;
+}
+
+.settings-icon {
+    width: 48px;
+    height: 48px;
+    background: #f1f5f9;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.settings-card-header h3 {
+    font-size: 1.15rem;
+    color: #0A1E2E;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.settings-card-header p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-actions {
+    margin-top: 22px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-save {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #1A3D5C, #0A1E2E);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(26,61,92,0.3);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26,61,92,0.4);
+}
+
+.btn-password {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+}
+
+.btn-password:hover {
+    box-shadow: 0 6px 20px rgba(245,158,11,0.4);
 }
 
 /* ===== UTILITIES ===== */
@@ -681,6 +809,10 @@ tr:hover td {
     .charts-grid {
         grid-template-columns: 1fr;
     }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -765,11 +897,24 @@ tr:hover td {
         font-size: 2.4rem;
     }
 
+    .profile-grid {
+        padding: 16px;
+        gap: 20px;
+    }
+
     .profile-box {
-        width: 90%;
-        max-width: 420px;
+        width: 100%;
         padding: 30px 20px;
-        margin: 25px auto;
+        margin: 0;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .settings-card {
+        padding: 24px 18px;
     }
 
     .modal-box {
@@ -832,6 +977,20 @@ tr:hover td {
     th, td {
         padding: 10px 12px;
         font-size: 0.82rem;
+    }
+
+    .profile-grid {
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .settings-card {
+        padding: 20px 14px;
+    }
+
+    .btn-save {
+        width: 100%;
+        text-align: center;
     }
 
     .modal-box {
