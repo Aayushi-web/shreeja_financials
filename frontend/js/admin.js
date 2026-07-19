@@ -80,19 +80,31 @@ function formatMoney(value) {
 
 // ===== DASHBOARD =====
 async function loadDashboard() {
-    const stats = await api('GET', '/portfolios/stats');
+    ['total-investors', 'total-portfolios', 'total-invested', 'total-current', 'total-pl'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<span class="skeleton skeleton-text"></span>';
+    });
 
-    document.getElementById('total-investors').textContent = stats.total_investors;
-    document.getElementById('total-portfolios').textContent = stats.total_portfolios;
-    document.getElementById('total-invested').textContent = formatMoney(stats.total_invested);
-    document.getElementById('total-current').textContent = formatMoney(stats.total_current_value);
+    try {
+        const stats = await api('GET', '/portfolios/stats');
 
-    const pl = stats.total_profit_loss;
-    const plEl = document.getElementById('total-pl');
-    plEl.textContent = formatMoney(pl);
-    plEl.className = pl >= 0 ? 'positive' : 'negative';
+        document.getElementById('total-investors').textContent = stats.total_investors;
+        document.getElementById('total-portfolios').textContent = stats.total_portfolios;
+        document.getElementById('total-invested').textContent = formatMoney(stats.total_invested);
+        document.getElementById('total-current').textContent = formatMoney(stats.total_current_value);
 
-    loadCharts();
+        const pl = stats.total_profit_loss;
+        const plEl = document.getElementById('total-pl');
+        plEl.textContent = formatMoney(pl);
+        plEl.className = pl >= 0 ? 'positive' : 'negative';
+
+        loadCharts();
+    } catch (err) {
+        ['total-investors', 'total-portfolios', 'total-invested', 'total-current', 'total-pl'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '-';
+        });
+    }
 }
 
 // ===== CHARTS =====
@@ -190,8 +202,25 @@ async function loadCharts() {
 var allInvestors = [];
 
 async function loadInvestors() {
-    allInvestors = await api('GET', '/investors');
-    renderInvestors(allInvestors);
+    const tbody = document.getElementById('investors-tbody');
+    if (tbody) {
+        tbody.innerHTML = Array(3).fill(0).map(() => `
+            <tr>
+                <td><div class="skeleton skeleton-cell" style="width: 120px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 170px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
+                <td><div class="skeleton skeleton-badge"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+            </tr>
+        `).join('');
+    }
+    try {
+        allInvestors = await api('GET', '/investors');
+        renderInvestors(allInvestors);
+    } catch (err) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:#dc2626">${err.message || 'Failed to load investors'}</td></tr>`;
+    }
 }
 
 function renderInvestors(investors) {
@@ -286,8 +315,28 @@ async function deleteInvestor(id) {
 var allPortfolios = [];
 
 async function loadPortfolios() {
-    allPortfolios = await api('GET', '/portfolios');
-    renderPortfolios(allPortfolios);
+    const tbody = document.getElementById('portfolio-tbody');
+    if (tbody) {
+        tbody.innerHTML = Array(3).fill(0).map(() => `
+            <tr>
+                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 50px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+            </tr>
+        `).join('');
+    }
+    try {
+        allPortfolios = await api('GET', '/portfolios');
+        renderPortfolios(allPortfolios);
+    } catch (err) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;color:#dc2626">${err.message || 'Failed to load portfolios'}</td></tr>`;
+    }
 }
 
 function renderPortfolios(portfolios) {

@@ -354,6 +354,37 @@ tr:hover td {
 .positive { color: #16a34a; font-weight: 700; }
 .negative { color: #dc2626; font-weight: 700; }
 
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+    width: 90px;
+    height: 24px;
+    border-radius: 6px;
+}
+
+.skeleton-cell {
+    height: 18px;
+    border-radius: 4px;
+}
+
+.skeleton-badge {
+    width: 60px;
+    height: 22px;
+    border-radius: 12px;
+}
+
 /* ===== MOBILE NAV ===== */
 .hamburger {
     display: none;

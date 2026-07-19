@@ -87,13 +87,36 @@ function showProfile(event) {
 
 // ===== LOAD MY PORTFOLIO =====
 async function loadMyPortfolio() {
+    ['total-invested', 'total-current', 'total-pl', 'total-pct'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<span class="skeleton skeleton-text"></span>';
+    });
+
+    const tbody = document.getElementById('portfolio-tbody');
+    if (tbody) {
+        tbody.innerHTML = Array(3).fill(0).map(() => `
+            <tr>
+                <td><div class="skeleton skeleton-cell" style="width: 140px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+            </tr>
+        `).join('');
+    }
+
     try {
         const holdings = await api('GET', '/portfolios/my');
         renderSummary(holdings);
         renderTable(holdings);
     } catch (err) {
-        const tbody = document.getElementById('portfolio-tbody');
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#dc2626">${err.message}</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#dc2626">${err.message || 'Failed to load portfolio'}</td></tr>`;
+        ['total-invested', 'total-current', 'total-pl', 'total-pct'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '-';
+        });
     }
 }
 
