@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeja Financials | My Portfolio</title>
+    <link rel="stylesheet" href="../css/investor.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">Shreeja Financials</div>
+            <nav>
+                <a href="#" class="nav-item active" onclick="showPortfolio(event)">My Portfolio</a>
+                <a href="#" class="nav-item" onclick="showProfile(event)">Profile</a>
+            </nav>
+            <a href="#" class="logout-btn" onclick="logout()">Logout</a>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div class="hamburger" style="display:none" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <h2 id="page-title">My Portfolio</h2>
+    </div>
+    <div class="user-info">
+        <div class="user-details">
+            <span id="investor-name">Investor</span>
+            <small id="investor-email"></small>
+        </div>
+        <div class="avatar">I</div>
+    </div>
+</div>
+
+            <section id="section-portfolio">
+                <!-- Welcome Banner -->
+<div class="welcome-banner">
+    <div>
+        <h3 id="welcome-name">Welcome! 👋</h3>
+        <p>Here's your portfolio performance at a glance.</p>
+    </div>
+    <div class="banner-icon">💼</div>
+</div>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon blue">Rs</div>
+                        <div class="card-info">
+                            <p>Total Investment</p>
+                            <h3 id="total-invested">₹0.00</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon green">CV</div>
+                        <div class="card-info">
+                            <p>Current Value</p>
+                            <h3 id="total-current">₹0.00</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon yellow">PL</div>
+                        <div class="card-info">
+                            <p>Total Profit/Loss</p>
+                            <h3 id="total-pl">₹0.00</h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon purple">%</div>
+                        <div class="card-info">
+                            <p>Overall Return %</p>
+                            <h3 id="total-pct">0%</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <h3>My Holdings</h3>
+                    <div class="table-box">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Share Name</th>
+                                    <th>Quantity</th>
+                                    <th>Buy Price</th>
+                                    <th>Amount Invested</th>
+                                    <th>Current Value</th>
+                                    <th>Total Return</th>
+                                    <th>Return %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-profile" class="hidden">
+                <div class="profile-box">
+                    <div class="profile-avatar">I</div>
+                    <h2 id="profile-name">Investor</h2>
+                    <p id="profile-email">Email not available</p>
+                    <p class="profile-role">Investor</p>
+                </div>
+            </section>
+            <!-- Footer -->
+<div class="footer">
+    Developed & Maintained by <a href="https://www.linkedin.com/in/mishraaayushi/" target="_blank"><strong>Maazha</strong></a>
+</div>
+        </main>
+    </div>
+
+    <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
+
+    <script src="../js/investor.js"></script>
+</body>
+</html>
