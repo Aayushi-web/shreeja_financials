@@ -78,10 +78,7 @@
                 </div>
 
                 <div class="table-section">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h3 style="margin-bottom:0;">My Holdings</h3>
-                        <button class="btn-primary buy-new-btn" onclick="openTradeModal('BUY')">+ Buy New Stock</button>
-                    </div>
+                    <h3>My Holdings</h3>
                     <div class="table-box">
                         <table>
                             <thead>
@@ -93,7 +90,6 @@
                                     <th>Current Value</th>
                                     <th>Total Return</th>
                                     <th>Return %</th>
-                                    <th style="text-align:center;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="portfolio-tbody">
@@ -105,7 +101,6 @@
                                     <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
-                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                 </tr>
                                 <tr>
                                     <td><div class="skeleton skeleton-cell" style="width: 120px;"></div></td>
@@ -115,7 +110,6 @@
                                     <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 75px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 65px;"></div></td>
-                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -139,48 +133,6 @@
     </div>
 
     <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
-
-    <!-- Trade Modal -->
-    <div id="trade-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Trade Stock</h3>
-                <span class="close-modal" onclick="closeTradeModal()">&times;</span>
-            </div>
-            <form id="trade-form" onsubmit="submitTrade(event)">
-                <input type="hidden" id="trade-type" value="BUY">
-                
-                <div class="form-group">
-                    <label for="trade-symbol">Stock Symbol / Share Name</label>
-                    <input type="text" id="trade-symbol" required placeholder="e.g. Reliance Industries Ltd">
-                </div>
-
-                <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                    <div class="form-group">
-                        <label for="trade-quantity">Quantity (Shares)</label>
-                        <input type="number" id="trade-quantity" required min="1" step="1" placeholder="10" oninput="updateTradeTotal()">
-                    </div>
-                    <div class="form-group">
-                        <label for="trade-price">Price per Share (₹)</label>
-                        <input type="number" id="trade-price" required min="0.01" step="0.01" placeholder="2450.00" oninput="updateTradeTotal()">
-                    </div>
-                </div>
-
-                <div class="trade-summary-box">
-                    <div class="summary-row">
-                        <span>Total Estimated Amount:</span>
-                        <strong id="trade-total">₹0.00</strong>
-                    </div>
-                    <small id="trade-note" style="color:#64748b; display:block; margin-top:5px;"></small>
-                </div>
-
-                <div class="modal-actions" style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
-                    <button type="button" class="btn-secondary" onclick="closeTradeModal()">Cancel</button>
-                    <button type="submit" id="trade-submit-btn" class="btn-primary">Confirm Trade</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script src="../js/api.js"></script>
     <script src="../js/investor.js"></script>

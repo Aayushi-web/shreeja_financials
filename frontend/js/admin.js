@@ -397,17 +397,21 @@ function renderPortfolios(portfolios) {
             : '0.00';
         const cls = ret >= 0 ? 'positive' : 'negative';
 
+        const avgPrice = p.average_buy_price !== undefined ? p.average_buy_price : p.buy_price;
+
         tbody.innerHTML += `
             <tr>
                 <td>${p.investor_name}</td>
-                <td>${p.share_name}</td>
+                <td><strong>${p.share_name}</strong></td>
                 <td>${p.quantity}</td>
-                <td>${formatMoney(p.buy_price)}</td>
+                <td>${formatMoney(avgPrice)}</td>
                 <td>${formatMoney(p.amount_invested)}</td>
                 <td>${formatMoney(p.current_value)}</td>
                 <td class="${cls}">${formatMoney(ret)}</td>
                 <td class="${cls}">${retPct}%</td>
-                <td>
+                <td style="white-space: nowrap;">
+                    <button class="btn-action btn-buy" style="background:#dcfce7;color:#16a34a;border:none;padding:5px 10px;border-radius:6px;font-weight:600;cursor:pointer;margin-right:4px;" onclick="openAdminTradeModal('BUY', ${p.user_id}, '${p.investor_name.replace(/'/g, "\\'")}', '${p.share_name.replace(/'/g, "\\'")}', ${p.quantity}, ${avgPrice})">Buy</button>
+                    <button class="btn-action btn-sell" style="background:#fee2e2;color:#dc2626;border:none;padding:5px 10px;border-radius:6px;font-weight:600;cursor:pointer;margin-right:4px;" onclick="openAdminTradeModal('SELL', ${p.user_id}, '${p.investor_name.replace(/'/g, "\\'")}', '${p.share_name.replace(/'/g, "\\'")}', ${p.quantity}, ${avgPrice})">Sell</button>
                     <button class="btn-edit" onclick="editPortfolio(${p.id})">Edit</button>
                     <button class="btn-delete" onclick="deletePortfolio(${p.id})">Delete</button>
                 </td>
@@ -595,6 +599,101 @@ function togglePasswordVisibility(inputId, iconEl) {
     } else {
         input.type = 'password';
         if (iconEl) iconEl.textContent = '👁️';
+    }
+}
+
+// ===== ADMIN TRADE MODAL & BUY/SELL LOGIC =====
+let adminTradeMaxQuantity = 0;
+
+async function openAdminTradeModal(type, targetUserId = '', investorName = '', symbol = '', maxQty = 0, currentPrice = '') {
+    const modal = document.getElementById('admin-trade-modal');
+    const title = document.getElementById('admin-trade-modal-title');
+    const typeInput = document.getElementById('admin-trade-type');
+    const investorSelect = document.getElementById('admin-trade-investor');
+    const symbolInput = document.getElementById('admin-trade-symbol');
+    const qtyInput = document.getElementById('admin-trade-quantity');
+    const priceInput = document.getElementById('admin-trade-price');
+    const noteEl = document.getElementById('admin-trade-note');
+    const submitBtn = document.getElementById('admin-trade-submit-btn');
+
+    typeInput.value = type;
+    symbolInput.value = symbol;
+    priceInput.value = currentPrice ? Number(currentPrice).toFixed(2) : '';
+    qtyInput.value = '';
+    adminTradeMaxQuantity = Number(maxQty || 0);
+
+    const investors = await api('GET', '/investors');
+    investorSelect.innerHTML = investors.map(i => `<option value="${i.id}" ${i.id == targetUserId ? 'selected' : ''}>${i.name} (${i.user_id})</option>`).join('');
+    investorSelect.disabled = !!targetUserId;
+
+    if (type === 'BUY') {
+        title.textContent = symbol ? `Buy Shares of ${symbol} for ${investorName}` : 'Buy New Stock for Investor';
+        submitBtn.textContent = 'Confirm Buy Order';
+        submitBtn.style.background = 'linear-gradient(135deg, #22C55E, #16a34a)';
+        symbolInput.readOnly = !!symbol;
+        qtyInput.max = '';
+        noteEl.textContent = symbol ? `Investor currently holds ${adminTradeMaxQuantity} shares.` : '';
+    } else {
+        title.textContent = `Sell Shares of ${symbol} for ${investorName}`;
+        submitBtn.textContent = 'Confirm Sell Order';
+        submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        symbolInput.readOnly = true;
+        qtyInput.max = adminTradeMaxQuantity;
+        noteEl.textContent = `Available for investor to sell: ${adminTradeMaxQuantity} shares.`;
+    }
+
+    updateAdminTradeTotal();
+    modal.classList.remove('hidden');
+}
+
+function updateAdminTradeTotal() {
+    const qty = Number(document.getElementById('admin-trade-quantity').value || 0);
+    const price = Number(document.getElementById('admin-trade-price').value || 0);
+    const total = qty * price;
+    document.getElementById('admin-trade-total').textContent = formatMoney(total);
+}
+
+async function submitAdminTrade(event) {
+    event.preventDefault();
+    const type = document.getElementById('admin-trade-type').value;
+    const user_id = Number(document.getElementById('admin-trade-investor').value);
+    const stock_symbol = document.getElementById('admin-trade-symbol').value.trim();
+    const quantity = Number(document.getElementById('admin-trade-quantity').value);
+    const current_price = Number(document.getElementById('admin-trade-price').value);
+
+    if (!user_id || !stock_symbol || quantity <= 0 || current_price <= 0) {
+        alert('Please select an investor, enter a valid stock symbol, positive quantity, and price.');
+        return;
+    }
+
+    if (type === 'SELL' && quantity > adminTradeMaxQuantity) {
+        alert(`Cannot sell more shares than the investor currently owns (${adminTradeMaxQuantity} shares).`);
+        return;
+    }
+
+    const endpoint = type === 'BUY' ? '/portfolio/buy' : '/portfolio/sell';
+    const submitBtn = document.getElementById('admin-trade-submit-btn');
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing...';
+
+    try {
+        const response = await api('POST', endpoint, {
+            user_id,
+            stock_symbol,
+            quantity,
+            current_price
+        });
+
+        alert(response.message || `Successfully processed ${type} order for investor!`);
+        closeModal('admin-trade-modal');
+        await loadPortfolios();
+        await loadDashboard();
+    } catch (err) {
+        alert(err.message || `Failed to process ${type} request`);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = origText;
     }
 }
 

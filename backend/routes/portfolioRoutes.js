@@ -14,10 +14,10 @@ const {
 
 // Investor route - sees own portfolio
 router.get('/my', protect, getMyPortfolio);
-router.post('/buy', protect, buyShare);
-router.post('/sell', protect, sellShare);
 
-// Admin only routes
+// Admin only routes (including buy and sell trading)
+router.post('/buy', protect, adminOnly, buyShare);
+router.post('/sell', protect, adminOnly, sellShare);
 router.get('/', protect, adminOnly, getAllPortfolios);
 router.post('/', protect, adminOnly, addShare);
 router.put('/:id', protect, adminOnly, updateShare);

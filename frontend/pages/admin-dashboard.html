@@ -176,7 +176,10 @@
             <section id="section-portfolio" class="hidden">
                 <div class="section-header">
                     <input type="text" id="search-portfolio" placeholder="🔍 Search shares..." oninput="searchPortfolios()" />
-                    <button onclick="openPortfolioModal()">+ Add Portfolio</button>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="openAdminTradeModal('BUY')" style="background: linear-gradient(135deg, #22C55E, #16a34a); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">+ Trade Stock (Buy/Sell)</button>
+                        <button onclick="openPortfolioModal()">+ Add Portfolio</button>
+                    </div>
                 </div>
                 <div class="table-box">
                     <table>
@@ -401,6 +404,53 @@
                 <button onclick="savePortfolio()">Save</button>
                 <button class="cancel" onclick="closeModal('portfolio-modal')">Cancel</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Admin Trade Modal -->
+    <div id="admin-trade-modal" class="modal hidden">
+        <div class="modal-box" style="max-width: 480px; text-align: left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px;">
+                <h3 id="admin-trade-modal-title" style="margin:0; border:none; padding:0;">Trade Stock for Investor</h3>
+                <span style="font-size:1.6rem; cursor:pointer; color:#64748b;" onclick="closeModal('admin-trade-modal')">&times;</span>
+            </div>
+            <form id="admin-trade-form" onsubmit="submitAdminTrade(event)">
+                <input type="hidden" id="admin-trade-type" value="BUY">
+                
+                <div class="form-group">
+                    <label for="admin-trade-investor">Select Investor</label>
+                    <select id="admin-trade-investor" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-trade-symbol">Stock Symbol / Share Name</label>
+                    <input type="text" id="admin-trade-symbol" required placeholder="e.g. Reliance Industries Ltd">
+                </div>
+
+                <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group">
+                        <label for="admin-trade-quantity">Quantity (Shares)</label>
+                        <input type="number" id="admin-trade-quantity" required min="1" step="1" placeholder="10" oninput="updateAdminTradeTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-trade-price">Price per Share (₹)</label>
+                        <input type="number" id="admin-trade-price" required min="0.01" step="0.01" placeholder="2450.00" oninput="updateAdminTradeTotal()">
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #334155;">
+                        <span>Total Estimated Amount:</span>
+                        <strong id="admin-trade-total" style="font-size: 1.15rem; color: #0A1E2E;">₹0.00</strong>
+                    </div>
+                    <small id="admin-trade-note" style="color:#64748b; display:block; margin-top:5px;"></small>
+                </div>
+
+                <div class="modal-actions" style="display:flex; gap:12px; margin-top:20px;">
+                    <button type="submit" id="admin-trade-submit-btn">Confirm Trade</button>
+                    <button type="button" class="cancel" onclick="closeModal('admin-trade-modal')">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 

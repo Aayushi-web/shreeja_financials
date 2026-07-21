@@ -103,7 +103,13 @@ exports.buyShare = async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const user_id = req.body.user_id || req.user.id;
+        const user_id = req.body.user_id;
+        if (!user_id) {
+            await connection.rollback();
+            connection.release();
+            return res.status(400).json({ message: 'Investor selection (user_id) is required to buy shares' });
+        }
+
         const stock_symbol = req.body.stock_symbol || req.body.share_name;
         const quantity = Number(req.body.quantity);
         const current_price = Number(req.body.current_price || req.body.price || req.body.buy_price);
@@ -169,7 +175,13 @@ exports.sellShare = async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const user_id = req.body.user_id || req.user.id;
+        const user_id = req.body.user_id;
+        if (!user_id) {
+            await connection.rollback();
+            connection.release();
+            return res.status(400).json({ message: 'Investor selection (user_id) is required to sell shares' });
+        }
+
         const stock_symbol = req.body.stock_symbol || req.body.share_name;
         const quantity = Number(req.body.quantity);
         const current_price = Number(req.body.current_price || req.body.price);
