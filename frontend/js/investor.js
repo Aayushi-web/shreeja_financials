@@ -64,6 +64,13 @@ async function loadCurrentUser() {
 }
 
 // ===== NAVIGATION =====
+function hideAllSections() {
+    ['section-portfolio', 'section-analytics', 'section-history', 'section-profile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+}
+
 function setActiveNav(event) {
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     const navItem = event?.target?.closest('.nav-item');
@@ -73,14 +80,30 @@ function setActiveNav(event) {
 
 function showPortfolio(event) {
     setActiveNav(event);
+    hideAllSections();
     document.getElementById('section-portfolio').classList.remove('hidden');
-    document.getElementById('section-profile').classList.add('hidden');
     document.getElementById('page-title').textContent = 'My Portfolio';
+}
+
+function showAnalytics(event) {
+    setActiveNav(event);
+    hideAllSections();
+    document.getElementById('section-analytics').classList.remove('hidden');
+    document.getElementById('page-title').textContent = 'Analytics & P/L Chart';
+    loadAnalytics();
+}
+
+function showHistory(event) {
+    setActiveNav(event);
+    hideAllSections();
+    document.getElementById('section-history').classList.remove('hidden');
+    document.getElementById('page-title').textContent = 'Transaction History';
+    loadHistory();
 }
 
 function showProfile(event) {
     setActiveNav(event);
-    document.getElementById('section-portfolio').classList.add('hidden');
+    hideAllSections();
     document.getElementById('section-profile').classList.remove('hidden');
     document.getElementById('page-title').textContent = 'Profile';
 }
@@ -173,6 +196,260 @@ function renderTable(holdings) {
             </tr>
         `;
     });
+}
+
+// ===== ANALYTICS & TECHNICAL INDICATORS CHARTING =====
+let plChartInstance = null;
+let rsiChartInstance = null;
+let currentChartData = null;
+const activeIndicators = { SMA: true, EMA: true, RSI: true };
+let allTransactions = [];
+
+async function loadAnalytics() {
+    ['analytics-invested', 'analytics-current', 'analytics-unrealized', 'analytics-winrate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<span class="skeleton skeleton-text"></span>';
+    });
+
+    try {
+        const data = await api('GET', '/portfolios/analytics');
+        const summary = data.summary || {};
+
+        document.getElementById('analytics-invested').textContent = formatMoney(summary.totalInvested);
+        document.getElementById('analytics-current').textContent = formatMoney(summary.totalCurrentValue);
+        
+        const unEl = document.getElementById('analytics-unrealized');
+        unEl.textContent = formatMoney(summary.totalUnrealizedPL);
+        unEl.className = summary.totalUnrealizedPL >= 0 ? 'positive' : 'negative';
+
+        const wrEl = document.getElementById('analytics-winrate');
+        wrEl.textContent = (summary.winRate || 0) + '%';
+        wrEl.className = summary.winRate >= 50 ? 'positive' : 'negative';
+
+        currentChartData = data.chartData;
+        if (currentChartData) {
+            renderCharts(currentChartData);
+        }
+    } catch (err) {
+        console.error('Failed to load portfolio analytics:', err);
+    }
+}
+
+function renderCharts(chartData) {
+    if (plChartInstance) plChartInstance.destroy();
+    if (rsiChartInstance) rsiChartInstance.destroy();
+
+    const ctxPL = document.getElementById('plChart')?.getContext('2d');
+    if (ctxPL) {
+        const datasets = [
+            {
+                label: 'Unrealized Profit/Loss (₹)',
+                data: chartData.pl_series,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 6
+            }
+        ];
+
+        if (activeIndicators.SMA && chartData.indicators.sma) {
+            datasets.push({
+                label: 'SMA (7 Period)',
+                data: chartData.indicators.sma,
+                borderColor: '#f59e0b',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                fill: false,
+                tension: 0.3,
+                pointRadius: 0
+            });
+        }
+
+        if (activeIndicators.EMA && chartData.indicators.ema) {
+            datasets.push({
+                label: 'EMA (7 Period)',
+                data: chartData.indicators.ema,
+                borderColor: '#8b5cf6',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                pointRadius: 0
+            });
+        }
+
+        plChartInstance = new Chart(ctxPL, {
+            type: 'line',
+            data: {
+                labels: chartData.timeline,
+                datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.06)' },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: (val) => '₹' + Number(val).toLocaleString('en-IN')
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#cbd5e1', font: { weight: '600' } } },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ₹${Number(ctx.raw || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const rsiBox = document.getElementById('rsiChart')?.closest('.chart-box');
+    if (!activeIndicators.RSI) {
+        if (rsiBox) rsiBox.style.display = 'none';
+    } else {
+        if (rsiBox) rsiBox.style.display = 'block';
+        const ctxRSI = document.getElementById('rsiChart')?.getContext('2d');
+        if (ctxRSI) {
+            rsiChartInstance = new Chart(ctxRSI, {
+                type: 'line',
+                data: {
+                    labels: chartData.timeline,
+                    datasets: [
+                        {
+                            label: 'RSI (7 Period Momentum)',
+                            data: chartData.indicators.rsi,
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.05)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 2
+                        },
+                        {
+                            label: 'Overbought (70)',
+                            data: chartData.timeline.map(() => 70),
+                            borderColor: 'rgba(239, 68, 68, 0.5)',
+                            borderWidth: 1,
+                            borderDash: [3, 3],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Oversold (30)',
+                            data: chartData.timeline.map(() => 30),
+                            borderColor: 'rgba(16, 185, 129, 0.5)',
+                            borderWidth: 1,
+                            borderDash: [3, 3],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+        }
+    }
+}
+
+function toggleIndicator(name) {
+    activeIndicators[name] = !activeIndicators[name];
+    const btn = document.getElementById('toggle-' + name.toLowerCase());
+    if (btn) {
+        if (activeIndicators[name]) btn.classList.add('active');
+        else btn.classList.remove('active');
+    }
+    if (currentChartData) {
+        renderCharts(currentChartData);
+    }
+}
+
+// ===== TRANSACTION HISTORY =====
+async function loadHistory() {
+    const tbody = document.getElementById('history-tbody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">Loading transaction history...</td></tr>';
+    }
+
+    try {
+        allTransactions = await api('GET', '/portfolios/history');
+        renderHistoryTable(allTransactions);
+    } catch (err) {
+        console.error('Failed to load transaction history:', err);
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#dc2626">${err.message || 'Error loading transactions'}</td></tr>`;
+        }
+    }
+}
+
+function filterHistoryTable() {
+    const query = document.getElementById('filter-symbol')?.value?.toLowerCase() || '';
+    const typeFilter = document.getElementById('filter-type')?.value || 'ALL';
+
+    const filtered = allTransactions.filter(t => {
+        const matchesSymbol = t.stock_symbol?.toLowerCase().includes(query);
+        const matchesType = typeFilter === 'ALL' || t.transaction_type === typeFilter;
+        return matchesSymbol && matchesType;
+    });
+
+    renderHistoryTable(filtered);
+}
+
+function renderHistoryTable(transactions) {
+    const tbody = document.getElementById('history-tbody');
+    if (!tbody) return;
+
+    if (!transactions || transactions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#888;">No transactions found</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = transactions.map(t => {
+        const badgeCls = t.transaction_type === 'BUY' ? 'badge buy' : 'badge sell';
+        const dateStr = new Date(t.timestamp).toLocaleString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        return `
+            <tr>
+                <td style="color: #94a3b8; font-size: 0.9em;">${dateStr}</td>
+                <td><strong>${t.stock_symbol}</strong></td>
+                <td><span class="${badgeCls}">${t.transaction_type}</span></td>
+                <td>${t.quantity}</td>
+                <td>${formatMoney(t.price_at_transaction)}</td>
+                <td><strong>${formatMoney(t.total_value)}</strong></td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // ===== LOGOUT =====

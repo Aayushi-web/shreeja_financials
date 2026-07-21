@@ -107,17 +107,26 @@ async function createDatabase() {
             ]
         );
 
-        // Insert sample Transactions for Rahul and Priya
-        await db.query(
-            `INSERT INTO transactions (user_id, stock_symbol, transaction_type, quantity, price_at_transaction) 
-             VALUES (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?)`,
-            [
-                investor1Result.insertId, 'Reliance Industries Ltd', 50, 2450.00,
-                investor1Result.insertId, 'Tata Consultancy Services', 30, 3800.00,
-                investor2Result.insertId, 'HDFC Bank Ltd', 100, 1520.00,
-                investor2Result.insertId, 'Infosys Ltd', 75, 1480.00
-            ]
-        );
+        // Insert sample Transactions for Rahul and Priya with realistic historical timestamps
+        await db.query(`
+            INSERT INTO transactions (user_id, stock_symbol, transaction_type, quantity, price_at_transaction, timestamp) VALUES
+            (?, 'Reliance Industries Ltd', 'BUY', 30, 2380.00, DATE_SUB(NOW(), INTERVAL 45 DAY)),
+            (?, 'Reliance Industries Ltd', 'BUY', 30, 2420.00, DATE_SUB(NOW(), INTERVAL 30 DAY)),
+            (?, 'Reliance Industries Ltd', 'SELL', 10, 2510.00, DATE_SUB(NOW(), INTERVAL 15 DAY)),
+            (?, 'Tata Consultancy Services', 'BUY', 20, 3750.00, DATE_SUB(NOW(), INTERVAL 40 DAY)),
+            (?, 'Tata Consultancy Services', 'BUY', 15, 3850.00, DATE_SUB(NOW(), INTERVAL 25 DAY)),
+            (?, 'Tata Consultancy Services', 'SELL', 5, 3920.00, DATE_SUB(NOW(), INTERVAL 10 DAY)),
+            (?, 'HDFC Bank Ltd', 'BUY', 60, 1490.00, DATE_SUB(NOW(), INTERVAL 50 DAY)),
+            (?, 'HDFC Bank Ltd', 'BUY', 50, 1540.00, DATE_SUB(NOW(), INTERVAL 28 DAY)),
+            (?, 'HDFC Bank Ltd', 'SELL', 10, 1580.00, DATE_SUB(NOW(), INTERVAL 12 DAY)),
+            (?, 'Infosys Ltd', 'BUY', 50, 1450.00, DATE_SUB(NOW(), INTERVAL 35 DAY)),
+            (?, 'Infosys Ltd', 'BUY', 25, 1510.00, DATE_SUB(NOW(), INTERVAL 20 DAY))
+        `, [
+            investor1Result.insertId, investor1Result.insertId, investor1Result.insertId,
+            investor1Result.insertId, investor1Result.insertId, investor1Result.insertId,
+            investor2Result.insertId, investor2Result.insertId, investor2Result.insertId,
+            investor2Result.insertId, investor2Result.insertId
+        ]);
 
         console.log('📈 Sample portfolio data populated.');
         console.log('✅ Database setup and initialization complete!');

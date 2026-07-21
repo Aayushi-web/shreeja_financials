@@ -13,6 +13,8 @@
             <div class="logo">Shreeja Financials</div>
             <nav>
                 <a href="#" class="nav-item active" onclick="showPortfolio(event)">My Portfolio</a>
+                <a href="#" class="nav-item" onclick="showAnalytics(event)">Analytics & P/L Chart</a>
+                <a href="#" class="nav-item" onclick="showHistory(event)">Transaction History</a>
                 <a href="#" class="nav-item" onclick="showProfile(event)">Profile</a>
             </nav>
             <a href="#" class="logout-btn" onclick="logout()">Logout</a>
@@ -117,6 +119,118 @@
                 </div>
             </section>
 
+            <section id="section-analytics" class="hidden">
+                <div class="welcome-banner" style="background: linear-gradient(135f, #1e3c72 0%, #2a5298 100%);">
+                    <div>
+                        <h3>Advanced Portfolio Analytics 📊</h3>
+                        <p>Track your realized & unrealized P/L progression with technical indicator overlays.</p>
+                    </div>
+                    <div class="banner-icon">📈</div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon blue">IN</div>
+                        <div class="card-info">
+                            <p>Total Invested</p>
+                            <h3 id="analytics-invested"><span class="skeleton skeleton-text"></span></h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon green">CV</div>
+                        <div class="card-info">
+                            <p>Current Valuation</p>
+                            <h3 id="analytics-current"><span class="skeleton skeleton-text"></span></h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon yellow">PL</div>
+                        <div class="card-info">
+                            <p>Unrealized Profit/Loss</p>
+                            <h3 id="analytics-unrealized"><span class="skeleton skeleton-text"></span></h3>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon purple">WR</div>
+                        <div class="card-info">
+                            <p>Win Rate Indicator</p>
+                            <h3 id="analytics-winrate"><span class="skeleton skeleton-text"></span></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-section-wrapper">
+                    <div class="indicators-bar">
+                        <span class="indicators-label">Technical Financial Indicators:</span>
+                        <div class="indicators-buttons">
+                            <button type="button" class="indicator-toggle active sma" id="toggle-sma" onclick="toggleIndicator('SMA')">
+                                <span class="indicator-dot sma-dot"></span> SMA (7)
+                            </button>
+                            <button type="button" class="indicator-toggle active ema" id="toggle-ema" onclick="toggleIndicator('EMA')">
+                                <span class="indicator-dot ema-dot"></span> EMA (7)
+                            </button>
+                            <button type="button" class="indicator-toggle active rsi" id="toggle-rsi" onclick="toggleIndicator('RSI')">
+                                <span class="indicator-dot rsi-dot"></span> RSI (7)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3>Valuation & Profit/Loss Progression</h3>
+                        <div class="canvas-container">
+                            <canvas id="plChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-box" style="margin-top: 24px;">
+                        <h3>Relative Strength Index (RSI - Momentum Oscillator)</h3>
+                        <div class="canvas-container" style="height: 220px;">
+                            <canvas id="rsiChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-history" class="hidden">
+                <div class="welcome-banner" style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);">
+                    <div>
+                        <h3>Transaction History 📋</h3>
+                        <p>Complete chronological audit log of all your BUY and SELL stock orders.</p>
+                    </div>
+                    <div class="banner-icon">📑</div>
+                </div>
+
+                <div class="table-section">
+                    <div class="history-controls">
+                        <input type="text" id="filter-symbol" placeholder="Search by Stock Symbol..." oninput="filterHistoryTable()" class="history-search">
+                        <select id="filter-type" onchange="filterHistoryTable()" class="history-select">
+                            <option value="ALL">All Transactions</option>
+                            <option value="BUY">BUY Only</option>
+                            <option value="SELL">SELL Only</option>
+                        </select>
+                    </div>
+                    <div class="table-box">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Stock Symbol</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Price at Trade</th>
+                                    <th>Total Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">Loading transaction history...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <section id="section-profile" class="hidden">
                 <div class="profile-box">
                     <div class="profile-avatar">I</div>
@@ -134,6 +248,7 @@
 
     <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/investor.js"></script>
 </body>
