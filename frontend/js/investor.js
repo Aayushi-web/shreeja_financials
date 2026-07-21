@@ -93,20 +93,12 @@ function showAnalytics(event) {
     loadAnalytics();
 }
 
-function showHistory(event, filterSymbol = '') {
+function showHistory(event) {
     setActiveNav(event);
     hideAllSections();
     document.getElementById('section-history').classList.remove('hidden');
     document.getElementById('page-title').textContent = 'Transaction History';
-    if (typeof filterSymbol === 'string' && filterSymbol) {
-        const searchInput = document.getElementById('filter-symbol');
-        if (searchInput) searchInput.value = filterSymbol;
-    }
-    loadHistory().then(() => {
-        if (typeof filterSymbol === 'string' && filterSymbol) {
-            filterHistoryTable();
-        }
-    });
+    loadHistory();
 }
 
 function showProfile(event) {
@@ -134,7 +126,6 @@ async function loadMyPortfolio() {
                 <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
                 <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                 <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
-                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
             </tr>
         `).join('');
     }
@@ -144,7 +135,7 @@ async function loadMyPortfolio() {
         renderSummary(holdings);
         renderTable(holdings);
     } catch (err) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:#dc2626">${err.message || 'Failed to load portfolio'}</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#dc2626">${err.message || 'Failed to load portfolio'}</td></tr>`;
         ['total-invested', 'total-current', 'total-pl', 'total-pct'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.textContent = '-';
@@ -183,7 +174,7 @@ function renderTable(holdings) {
     tbody.innerHTML = '';
 
     if (holdings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:#888">No holdings yet</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#888">No holdings yet</td></tr>';
         return;
     }
 
@@ -195,18 +186,13 @@ function renderTable(holdings) {
 
         tbody.innerHTML += `
             <tr>
-                <td><a href="javascript:void(0)" onclick="viewShareHistory('${h.share_name.replace(/'/g, "\\'")}')" style="color: var(--primary); text-decoration: underline; font-weight: 700;">${h.share_name}</a></td>
+                <td><strong>${h.share_name}</strong></td>
                 <td>${h.quantity}</td>
                 <td>${formatMoney(avgPrice)}</td>
                 <td>${formatMoney(h.amount_invested)}</td>
                 <td>${formatMoney(h.current_value)}</td>
                 <td class="${cls}">${formatMoney(ret)}</td>
                 <td class="${cls}">${retPct}%</td>
-                <td>
-                    <button type="button" class="btn-history-per-share" onclick="viewShareHistory('${h.share_name.replace(/'/g, "\\'")}')" title="View transaction history for ${h.share_name}">
-                        📜 History
-                    </button>
-                </td>
             </tr>
         `;
     });
@@ -464,79 +450,6 @@ function renderHistoryTable(transactions) {
             </tr>
         `;
     }).join('');
-}
-
-// ===== PER-SHARE TRANSACTION HISTORY MODAL =====
-async function viewShareHistory(shareName) {
-    const modal = document.getElementById('share-history-modal');
-    if (modal) modal.classList.remove('hidden');
-    
-    document.getElementById('modal-share-title').textContent = `${shareName} - Transaction History`;
-    
-    const tbody = document.getElementById('modal-history-tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color:#64748b;">Loading per-share transactions...</td></tr>';
-
-    const fullHistoryBtn = document.getElementById('btn-modal-full-history');
-    if (fullHistoryBtn) {
-        fullHistoryBtn.onclick = () => {
-            closeShareHistoryModal();
-            showHistory(null, shareName);
-        };
-    }
-
-    try {
-        if (!allTransactions || allTransactions.length === 0) {
-            allTransactions = await api('GET', '/portfolios/history');
-        }
-        
-        const shareTransactions = allTransactions.filter(t => 
-            t.stock_symbol && t.stock_symbol.toLowerCase() === shareName.toLowerCase()
-        );
-
-        let totalBoughtVal = 0;
-        let totalSoldVal = 0;
-        shareTransactions.forEach(t => {
-            if (t.transaction_type === 'BUY') totalBoughtVal += Number(t.total_value || 0);
-            else if (t.transaction_type === 'SELL') totalSoldVal += Number(t.total_value || 0);
-        });
-
-        document.getElementById('modal-total-bought').textContent = formatMoney(totalBoughtVal);
-        document.getElementById('modal-total-sold').textContent = formatMoney(totalSoldVal);
-        document.getElementById('modal-total-orders').textContent = shareTransactions.length;
-
-        if (shareTransactions.length === 0) {
-            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color:#888;">No recorded transactions for this share</td></tr>';
-            return;
-        }
-
-        if (tbody) {
-            tbody.innerHTML = shareTransactions.map(t => {
-                const badgeCls = t.transaction_type === 'BUY' ? 'badge buy' : 'badge sell';
-                const dateStr = new Date(t.timestamp).toLocaleString('en-IN', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                });
-
-                return `
-                    <tr>
-                        <td style="color: #64748b; font-size: 0.88em;">${dateStr}</td>
-                        <td><span class="${badgeCls}">${t.transaction_type}</span></td>
-                        <td>${t.quantity}</td>
-                        <td>${formatMoney(t.price_at_transaction)}</td>
-                        <td><strong>${formatMoney(t.total_value)}</strong></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-    } catch (err) {
-        console.error('Error loading per-share history:', err);
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 24px; color:#dc2626;">Failed to load transactions: ${err.message}</td></tr>`;
-    }
-}
-
-function closeShareHistoryModal() {
-    const modal = document.getElementById('share-history-modal');
-    if (modal) modal.classList.add('hidden');
 }
 
 // ===== LOGOUT =====

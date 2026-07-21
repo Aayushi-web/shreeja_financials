@@ -900,27 +900,3 @@ tr:hover td {
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
-
-/* ===== PER-SHARE HISTORY ACTION & MODAL ===== */
-.btn-history-per-share {
-    background: #f1f5f9;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.btn-history-per-share:hover {
-    background: var(--primary);
-    color: #ffffff;
-    border-color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(34, 197, 94, 0.25);
-}

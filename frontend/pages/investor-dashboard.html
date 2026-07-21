@@ -92,7 +92,6 @@
                                     <th>Current Value</th>
                                     <th>Total Return</th>
                                     <th>Return %</th>
-                                    <th>History</th>
                                 </tr>
                             </thead>
                             <tbody id="portfolio-tbody">
@@ -104,7 +103,6 @@
                                     <td><div class="skeleton skeleton-cell" style="width: 100px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
-                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                 </tr>
                                 <tr>
                                     <td><div class="skeleton skeleton-cell" style="width: 120px;"></div></td>
@@ -114,7 +112,6 @@
                                     <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 75px;"></div></td>
                                     <td><div class="skeleton skeleton-cell" style="width: 65px;"></div></td>
-                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -242,61 +239,6 @@
                     <p class="profile-role">Investor</p>
                 </div>
             </section>
-
-            <!-- Per-Share Transaction History Modal -->
-            <div id="share-history-modal" class="modal hidden">
-                <div class="modal-content" style="max-width: 680px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25);">
-                    <div class="modal-header">
-                        <div>
-                            <h3 id="modal-share-title" style="margin: 0; font-size: 1.25rem;">Transaction History</h3>
-                            <p style="margin: 4px 0 0; font-size: 0.85rem; color: #cbd5e1;">Order log and execution details for this asset</p>
-                        </div>
-                        <span class="close-modal" onclick="closeShareHistoryModal()">&times;</span>
-                    </div>
-                    
-                    <div style="padding: 24px;">
-                        <div class="share-history-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
-                                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Bought</span>
-                                <div id="modal-total-bought" style="font-size: 1.15rem; font-weight: 700; color: #15803d; margin-top: 4px;">₹0.00</div>
-                            </div>
-                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
-                                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Sold</span>
-                                <div id="modal-total-sold" style="font-size: 1.15rem; font-weight: 700; color: #b91c1c; margin-top: 4px;">₹0.00</div>
-                            </div>
-                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
-                                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Net Orders</span>
-                                <div id="modal-total-orders" style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-top: 4px;">0</div>
-                            </div>
-                        </div>
-
-                        <div class="table-box" style="max-height: 340px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px;">
-                            <table style="margin: 0; width: 100%;">
-                                <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 5;">
-                                    <tr>
-                                        <th>Date & Time</th>
-                                        <th>Type</th>
-                                        <th>Qty</th>
-                                        <th>Price</th>
-                                        <th>Total Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modal-history-tbody">
-                                    <tr><td colspan="5" style="text-align:center; padding: 24px; color:#64748b;">Loading transactions...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-                            <button type="button" class="btn-secondary" onclick="closeShareHistoryModal()">Close</button>
-                            <button type="button" class="btn-primary" id="btn-modal-full-history" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">
-                                View in Full History Tab &rarr;
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Footer -->
 <div class="footer">
     Developed and designed by <a href="#"><strong>Maazha</strong></a>
