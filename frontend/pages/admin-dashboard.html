@@ -24,9 +24,6 @@
                 <a href="#" class="nav-item" onclick="showSection('portfolio', event)">
                     📊 Portfolio
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('stock-analytics', event)">
-                    📈 Stock Analytics
-                </a>
                 <a href="#" class="nav-item" onclick="showSection('profile', event)">
                     👤 Profile
                 </a>
@@ -320,104 +317,6 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- STOCK ANALYTICS SECTION -->
-            <section id="section-stock-analytics" class="hidden">
-                <div class="stock-selector-container">
-                    <div class="selector-header">
-                        <h3>🔍 Select or Search Stock Symbol</h3>
-                        <p>Analyze global per-share trading volume, execution prices, and investor holdings across all platform accounts.</p>
-                    </div>
-                    <div class="symbol-search-bar">
-                        <div class="search-input-wrapper">
-                            <input type="text" id="admin-symbol-input" placeholder="Enter stock symbol (e.g., AAPL, Reliance, TCS...)" onkeyup="handleSymbolSearchKey(event)" />
-                            <button class="btn-search-symbol" onclick="triggerStockAnalyticsSearch()">Analyze Stock</button>
-                        </div>
-                        <div class="symbol-dropdown-wrapper">
-                            <label for="admin-symbol-select">Quick Select Traded Share:</label>
-                            <select id="admin-symbol-select" onchange="handleSymbolDropdownChange(this.value)">
-                                <option value="">-- Choose Stock Ticker --</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Analytics Summary Cards -->
-                <div id="stock-analytics-summary" class="stock-kpi-grid hidden">
-                    <div class="card kpi-card">
-                        <div class="kpi-icon volume-icon">📦</div>
-                        <div class="kpi-content">
-                            <span>Total Volume Traded</span>
-                            <h2 id="kpi-total-volume">0</h2>
-                            <small class="kpi-subtext"><span id="kpi-bought-volume">0</span> Bought &bull; <span id="kpi-sold-volume">0</span> Sold</small>
-                        </div>
-                    </div>
-
-                    <div class="card kpi-card">
-                        <div class="kpi-icon buy-icon">💰</div>
-                        <div class="kpi-content">
-                            <span>Platform Avg Buy Price</span>
-                            <h2 id="kpi-avg-buy">₹0.00</h2>
-                            <small class="kpi-subtext">Weighted execution price across all buy orders</small>
-                        </div>
-                    </div>
-
-                    <div class="card kpi-card">
-                        <div class="kpi-icon sell-icon">📉</div>
-                        <div class="kpi-content">
-                            <span>Platform Avg Sell Price</span>
-                            <h2 id="kpi-avg-sell">₹0.00</h2>
-                            <small class="kpi-subtext">Weighted execution price across all sell orders</small>
-                        </div>
-                    </div>
-
-                    <div class="card kpi-card">
-                        <div class="kpi-icon holders-icon">👥</div>
-                        <div class="kpi-content">
-                            <span>Active Unique Holders</span>
-                            <h2 id="kpi-unique-holders">0</h2>
-                            <small class="kpi-subtext">Currently holding <span id="kpi-total-held">0</span> shares (&bull; <span id="kpi-total-traders">0</span> ever traded)</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Global Transaction History Table -->
-                <div id="stock-transactions-wrapper" class="table-container hidden" style="margin-top: 24px;">
-                    <div class="table-header">
-                        <div>
-                            <h3>Global Transaction History for <span id="active-symbol-badge" class="symbol-pill">AAPL</span></h3>
-                            <p>Complete audit log of all BUY and SELL executions across all registered investors</p>
-                        </div>
-                        <div class="table-actions">
-                            <input type="text" id="filter-stock-tx-input" placeholder="Filter by Investor name, ID or email..." onkeyup="filterStockTransactions()" class="filter-input" />
-                            <select id="filter-stock-tx-type" onchange="filterStockTransactions()" class="filter-select">
-                                <option value="ALL">All Types</option>
-                                <option value="BUY">BUY Only</option>
-                                <option value="SELL">SELL Only</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <th>Investor</th>
-                                    <th>Transaction Type</th>
-                                    <th>Quantity</th>
-                                    <th>Execution Price</th>
-                                    <th>Total Value</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stock-transactions-tbody">
-                                <tr>
-                                    <td colspan="6" style="text-align: center; padding: 24px; color: #888;">Select a stock symbol above to view per-share transactions</td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </section>

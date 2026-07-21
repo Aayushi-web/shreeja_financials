@@ -25,7 +25,7 @@ function showSection(section, event) {
 
     document.getElementById(`section-${section}`).classList.remove('hidden');
     document.getElementById('page-title').textContent =
-        section === 'stock-analytics' ? 'Stock Analytics' : (section.charAt(0).toUpperCase() + section.slice(1));
+        section.charAt(0).toUpperCase() + section.slice(1);
 
     const navItem = event?.target?.closest('.nav-item');
     if (navItem) navItem.classList.add('active');
@@ -34,7 +34,6 @@ function showSection(section, event) {
     if (section === 'dashboard') loadDashboard();
     if (section === 'investors') loadInvestors();
     if (section === 'portfolio') loadPortfolios();
-    if (section === 'stock-analytics') loadStockAnalyticsView();
     if (section === 'profile') loadProfile();
 }
 
@@ -696,139 +695,6 @@ async function submitAdminTrade(event) {
         submitBtn.disabled = false;
         submitBtn.textContent = origText;
     }
-}
-
-// ===== STOCK ANALYTICS & PER-SHARE TRANSACTIONS =====
-let currentStockTransactions = [];
-let activeStockSymbol = '';
-
-async function loadStockAnalyticsView() {
-    try {
-        const data = await api('GET', '/admin/symbols');
-        const select = document.getElementById('admin-symbol-select');
-        if (select && data.symbols) {
-            select.innerHTML = '<option value="">-- Choose Stock Ticker --</option>' + 
-                data.symbols.map(sym => `<option value="${sym}">${sym}</option>`).join('');
-        }
-    } catch (err) {
-        console.error('Failed to load traded symbols:', err);
-    }
-}
-
-function handleSymbolDropdownChange(symbol) {
-    if (!symbol) return;
-    document.getElementById('admin-symbol-input').value = symbol;
-    fetchAndRenderStockData(symbol);
-}
-
-function handleSymbolSearchKey(event) {
-    if (event.key === 'Enter') {
-        triggerStockAnalyticsSearch();
-    }
-}
-
-function triggerStockAnalyticsSearch() {
-    const query = document.getElementById('admin-symbol-input')?.value?.trim();
-    if (!query) {
-        alert('Please enter or select a stock symbol to analyze.');
-        return;
-    }
-    fetchAndRenderStockData(query);
-}
-
-async function fetchAndRenderStockData(symbol) {
-    activeStockSymbol = symbol.toUpperCase();
-    const badgeEl = document.getElementById('active-symbol-badge');
-    if (badgeEl) badgeEl.textContent = activeStockSymbol;
-
-    const summaryGrid = document.getElementById('stock-analytics-summary');
-    const tableWrapper = document.getElementById('stock-transactions-wrapper');
-    if (summaryGrid) summaryGrid.classList.remove('hidden');
-    if (tableWrapper) tableWrapper.classList.remove('hidden');
-
-    const tbody = document.getElementById('stock-transactions-tbody');
-    if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">Loading platform-wide data for ' + activeStockSymbol + '...</td></tr>';
-    }
-
-    try {
-        const [analyticsRes, transactionsRes] = await Promise.all([
-            api('GET', `/admin/analytics/${encodeURIComponent(symbol)}`),
-            api('GET', `/admin/transactions/${encodeURIComponent(symbol)}`)
-        ]);
-
-        if (analyticsRes.success && analyticsRes.analytics) {
-            renderStockSummary(analyticsRes.analytics);
-        }
-
-        if (transactionsRes.success && transactionsRes.transactions) {
-            currentStockTransactions = transactionsRes.transactions;
-            filterStockTransactions();
-        }
-    } catch (err) {
-        console.error('Failed to fetch stock data:', err);
-        if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#dc2626">${err.message || 'Error loading stock data'}</td></tr>`;
-        }
-    }
-}
-
-function renderStockSummary(analytics) {
-    setText('kpi-total-volume', (analytics.totalVolumeTraded || 0).toLocaleString('en-IN'));
-    setText('kpi-bought-volume', (analytics.totalBoughtVolume || 0).toLocaleString('en-IN'));
-    setText('kpi-sold-volume', (analytics.totalSoldVolume || 0).toLocaleString('en-IN'));
-
-    setText('kpi-avg-buy', '₹' + Number(analytics.avgBuyPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    setText('kpi-avg-sell', '₹' + Number(analytics.avgSellPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
-    setText('kpi-unique-holders', (analytics.uniqueInvestors || 0).toLocaleString('en-IN'));
-    setText('kpi-total-held', (analytics.totalHeldQuantity || 0).toLocaleString('en-IN'));
-    setText('kpi-total-traders', (analytics.totalTraders || 0).toLocaleString('en-IN'));
-}
-
-function filterStockTransactions() {
-    const query = document.getElementById('filter-stock-tx-input')?.value?.toLowerCase() || '';
-    const typeFilter = document.getElementById('filter-stock-tx-type')?.value || 'ALL';
-
-    const filtered = currentStockTransactions.filter(t => {
-        const matchesUser = (t.user_name?.toLowerCase().includes(query)) ||
-                            (t.user_login_id?.toLowerCase().includes(query)) ||
-                            (t.user_email?.toLowerCase().includes(query));
-        const matchesType = typeFilter === 'ALL' || t.transaction_type === typeFilter;
-        return matchesUser && matchesType;
-    });
-
-    renderStockTransactionsTable(filtered);
-}
-
-function renderStockTransactionsTable(transactions) {
-    const tbody = document.getElementById('stock-transactions-tbody');
-    if (!tbody) return;
-
-    if (!transactions || transactions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#888;">No transactions found for ' + activeStockSymbol + '</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = transactions.map(t => {
-        const badgeCls = t.transaction_type === 'BUY' ? 'badge buy' : 'badge sell';
-        const dateStr = new Date(t.timestamp).toLocaleString('en-IN', {
-            day: '2-digit', month: 'short', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-        const investorDisplay = `<strong>${t.user_name || 'Investor'}</strong><br><small style="color:#64748b;">${t.user_login_id || t.user_email || ''}</small>`;
-
-        return `
-            <tr>
-                <td style="color: #64748b; font-size: 0.9em;">${dateStr}</td>
-                <td>${investorDisplay}</td>
-                <td><span class="${badgeCls}">${t.transaction_type}</span></td>
-                <td><strong>${Number(t.quantity).toLocaleString('en-IN')}</strong></td>
-                <td>₹${Number(t.price_at_transaction).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                <td><strong>₹${Number(t.total_value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
-            </tr>
-        `;
-    }).join('');
 }
 
 // ===== INIT =====
