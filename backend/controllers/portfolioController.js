@@ -330,27 +330,39 @@ function calculateRSI(data, period = 14) {
 // GET TRANSACTION HISTORY
 exports.getTransactionHistory = async (req, res) => {
     try {
-        const user_id = (req.user.role === 'admin' && req.query.user_id) ? Number(req.query.user_id) : req.user.id;
         const { stock_symbol, transaction_type } = req.query;
+        let sql = '';
+        const params = [];
 
-        let sql = 'SELECT * FROM transactions WHERE user_id = ?';
-        const params = [user_id];
+        if (req.user.role === 'admin') {
+            const queryUserId = req.query.user_id && req.query.user_id !== 'ALL' && req.query.user_id !== '' ? Number(req.query.user_id) : null;
+            if (queryUserId) {
+                sql = 'SELECT t.*, u.name as investor_name FROM transactions t LEFT JOIN users u ON t.user_id = u.id WHERE t.user_id = ?';
+                params.push(queryUserId);
+            } else {
+                sql = 'SELECT t.*, u.name as investor_name FROM transactions t LEFT JOIN users u ON t.user_id = u.id WHERE 1=1';
+            }
+        } else {
+            sql = 'SELECT t.*, u.name as investor_name FROM transactions t LEFT JOIN users u ON t.user_id = u.id WHERE t.user_id = ?';
+            params.push(req.user.id);
+        }
 
         if (stock_symbol && stock_symbol.trim() !== '') {
-            sql += ' AND stock_symbol LIKE ?';
+            sql += ' AND t.stock_symbol LIKE ?';
             params.push(`%${stock_symbol.trim()}%`);
         }
         if (transaction_type && ['BUY', 'SELL'].includes(transaction_type.toUpperCase())) {
-            sql += ' AND transaction_type = ?';
+            sql += ' AND t.transaction_type = ?';
             params.push(transaction_type.toUpperCase());
         }
 
-        sql += ' ORDER BY timestamp DESC';
+        sql += ' ORDER BY t.timestamp DESC';
         const [rows] = await db.query(sql, params);
 
         const formatted = rows.map(r => ({
             id: r.id,
             user_id: r.user_id,
+            investor_name: r.investor_name || `Investor #${r.user_id}`,
             stock_symbol: r.stock_symbol,
             transaction_type: r.transaction_type,
             quantity: Number(r.quantity),
@@ -369,12 +381,22 @@ exports.getTransactionHistory = async (req, res) => {
 // GET PORTFOLIO ANALYTICS (P/L & Indicators)
 exports.getPortfolioAnalytics = async (req, res) => {
     try {
-        const user_id = (req.user.role === 'admin' && req.query.user_id) ? Number(req.query.user_id) : req.user.id;
+        let portfolios = [];
+        let transactions = [];
 
-        // Fetch current holdings
-        const [portfolios] = await db.query('SELECT * FROM portfolios WHERE user_id = ?', [user_id]);
-        // Fetch historical transactions
-        const [transactions] = await db.query('SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp ASC', [user_id]);
+        if (req.user.role === 'admin') {
+            const queryUserId = req.query.user_id && req.query.user_id !== 'ALL' && req.query.user_id !== '' ? Number(req.query.user_id) : null;
+            if (queryUserId) {
+                [portfolios] = await db.query('SELECT * FROM portfolios WHERE user_id = ?', [queryUserId]);
+                [transactions] = await db.query('SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp ASC', [queryUserId]);
+            } else {
+                [portfolios] = await db.query('SELECT * FROM portfolios');
+                [transactions] = await db.query('SELECT * FROM transactions ORDER BY timestamp ASC');
+            }
+        } else {
+            [portfolios] = await db.query('SELECT * FROM portfolios WHERE user_id = ?', [req.user.id]);
+            [transactions] = await db.query('SELECT * FROM transactions WHERE user_id = ? ORDER BY timestamp ASC', [req.user.id]);
+        }
 
         let totalInvested = 0;
         let totalCurrentValue = 0;

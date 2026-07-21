@@ -174,53 +174,206 @@
 
             <!-- PORTFOLIO SECTION -->
             <section id="section-portfolio" class="hidden">
-                <div class="section-header">
-                    <input type="text" id="search-portfolio" placeholder="🔍 Search shares..." oninput="searchPortfolios()" />
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="openAdminTradeModal('BUY')" style="background: linear-gradient(135deg, #22C55E, #16a34a); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">+ Trade Stock (Buy/Sell)</button>
-                        <button onclick="openPortfolioModal()">+ Add Portfolio</button>
+                <div class="portfolio-nav-tabs">
+                    <button type="button" class="portfolio-tab-btn active" id="port-tab-holdings" onclick="switchAdminPortfolioTab('holdings')">
+                        📁 All Holdings
+                    </button>
+                    <button type="button" class="portfolio-tab-btn" id="port-tab-analytics" onclick="switchAdminPortfolioTab('analytics')">
+                        📈 Advanced Analytics & P/L
+                    </button>
+                    <button type="button" class="portfolio-tab-btn" id="port-tab-transactions" onclick="switchAdminPortfolioTab('transactions')">
+                        📜 All Transactions Log
+                    </button>
+                </div>
+
+                <!-- SUBVIEW 1: HOLDINGS -->
+                <div id="port-subview-holdings" class="port-subview">
+                    <div class="section-header">
+                        <input type="text" id="search-portfolio" placeholder="🔍 Search shares..." oninput="searchPortfolios()" />
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="openAdminTradeModal('BUY')" style="background: linear-gradient(135deg, #22C55E, #16a34a); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">+ Trade Stock (Buy/Sell)</button>
+                            <button onclick="openPortfolioModal()">+ Add Portfolio</button>
+                        </div>
+                    </div>
+                    <div class="table-box">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Investor</th>
+                                    <th>Share Name</th>
+                                    <th>Quantity</th>
+                                    <th>Buy Price</th>
+                                    <th>Invested</th>
+                                    <th>Current Value</th>
+                                    <th>Return</th>
+                                    <th>Return %</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-tbody">
+                                <tr>
+                                    <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 50px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 85px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 95px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 95px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 75px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 55px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="table-box">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Investor</th>
-                                <th>Share Name</th>
-                                <th>Quantity</th>
-                                <th>Buy Price</th>
-                                <th>Invested</th>
-                                <th>Current Value</th>
-                                <th>Return</th>
-                                <th>Return %</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="portfolio-tbody">
-                            <tr>
-                                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 50px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 85px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 95px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 95px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 75px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 55px;"></div></td>
-                                <td><div class="skeleton skeleton-cell" style="width: 110px;"></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <!-- SUBVIEW 2: ADVANCED ANALYTICS -->
+                <div id="port-subview-analytics" class="port-subview hidden">
+                    <div class="welcome-banner" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                        <div>
+                            <h3>Advanced Portfolio & Investor Analytics 📊</h3>
+                            <p>Track system-wide valuation progression or drill down into individual investor portfolios with SMA, EMA, and RSI overlays.</p>
+                            <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
+                                <label style="font-weight: 700; color: white; font-size: 0.9rem;">Analyze Scope:</label>
+                                <select id="admin-analytics-user-select" onchange="loadAdminAnalytics()" class="history-select" style="padding: 8px 14px; border-radius: 8px; font-size: 0.9rem; background: white; color: #1e293b; border: none;">
+                                    <option value="ALL">🌐 All Investors (System Aggregate)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="banner-icon">📈</div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-icon blue">IN</div>
+                            <div class="card-info">
+                                <p>Total Invested</p>
+                                <h3 id="admin-analytics-invested"><span class="skeleton skeleton-text"></span></h3>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon green">CV</div>
+                            <div class="card-info">
+                                <p>Current Valuation</p>
+                                <h3 id="admin-analytics-current"><span class="skeleton skeleton-text"></span></h3>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon yellow">PL</div>
+                            <div class="card-info">
+                                <p>Unrealized Profit/Loss</p>
+                                <h3 id="admin-analytics-unrealized"><span class="skeleton skeleton-text"></span></h3>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon purple">WR</div>
+                            <div class="card-info">
+                                <p>System Win Rate</p>
+                                <h3 id="admin-analytics-winrate"><span class="skeleton skeleton-text"></span></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section-wrapper">
+                        <div class="indicators-bar">
+                            <span class="indicators-label">Technical Financial Indicators:</span>
+                            <div class="indicators-buttons">
+                                <button type="button" class="indicator-toggle active sma" id="toggle-admin-sma" onclick="toggleAdminIndicator('SMA')">
+                                    <span class="indicator-dot sma-dot"></span> SMA (7)
+                                </button>
+                                <button type="button" class="indicator-toggle active ema" id="toggle-admin-ema" onclick="toggleAdminIndicator('EMA')">
+                                    <span class="indicator-dot ema-dot"></span> EMA (7)
+                                </button>
+                                <button type="button" class="indicator-toggle active rsi" id="toggle-admin-rsi" onclick="toggleAdminIndicator('RSI')">
+                                    <span class="indicator-dot rsi-dot"></span> RSI (7)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="chart-box">
+                            <h3>Valuation & Profit/Loss Progression Curve</h3>
+                            <div class="canvas-container">
+                                <canvas id="adminPlChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-box" style="margin-top: 24px;">
+                            <h3>Relative Strength Index (RSI - Momentum Oscillator)</h3>
+                            <div class="canvas-container" style="height: 220px;">
+                                <canvas id="adminRsiChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBVIEW 3: TRANSACTIONS LOG -->
+                <div id="port-subview-transactions" class="port-subview hidden">
+                    <div class="welcome-banner" style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);">
+                        <div>
+                            <h3>System Transactions Audit Log 📋</h3>
+                            <p>Complete chronological audit trail of all BUY and SELL stock transactions executed across all investors.</p>
+                        </div>
+                        <div class="banner-icon">📑</div>
+                    </div>
+
+                    <div class="history-controls">
+                        <input type="text" id="admin-filter-history-query" placeholder="🔍 Search by Stock Symbol or Investor Name..." oninput="filterAdminHistoryTable()" class="history-search">
+                        <select id="admin-filter-history-user" onchange="loadAdminTransactions()" class="history-select">
+                            <option value="ALL">🌐 All Investors</option>
+                        </select>
+                        <select id="admin-filter-history-type" onchange="filterAdminHistoryTable()" class="history-select">
+                            <option value="ALL">All Types</option>
+                            <option value="BUY">BUY Only</option>
+                            <option value="SELL">SELL Only</option>
+                        </select>
+                    </div>
+
+                    <div class="table-box">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Investor Name</th>
+                                    <th>Stock Symbol</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Price at Trade</th>
+                                    <th>Total Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-history-tbody">
+                                <tr>
+                                    <td><div class="skeleton skeleton-cell" style="width: 140px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 120px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 60px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 80px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 90px;"></div></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="skeleton skeleton-cell" style="width: 130px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 140px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 85px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 55px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 65px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 85px;"></div></td>
+                                    <td><div class="skeleton skeleton-cell" style="width: 95px;"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -233,10 +386,6 @@
                         <p id="profile-email">admin@portfolio.com</p>
                         <p class="profile-role">Administrator</p>
                         <div class="profile-meta">
-                            <div class="profile-meta-item">
-                                <span>Username / Login ID</span>
-                                <strong id="profile-username-display">admin</strong>
-                            </div>
                             <div class="profile-meta-item">
                                 <span>Phone Number</span>
                                 <strong id="profile-phone-display">-</strong>
@@ -454,6 +603,58 @@
         </div>
     </div>
 
+    <!-- Admin Per-Share Transaction History Modal -->
+    <div id="admin-share-history-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 680px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25);">
+            <div class="modal-header">
+                <div>
+                    <h3 id="admin-modal-share-title" style="margin: 0; font-size: 1.25rem;">Transaction History</h3>
+                    <p id="admin-modal-share-subtitle" style="margin: 4px 0 0; font-size: 0.85rem; color: #cbd5e1;">Order log and execution details</p>
+                </div>
+                <span class="close-modal" onclick="closeModal('admin-share-history-modal')">&times;</span>
+            </div>
+            
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Bought</span>
+                        <div id="admin-modal-total-bought" style="font-size: 1.15rem; font-weight: 700; color: #15803d; margin-top: 4px;">₹0.00</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Sold</span>
+                        <div id="admin-modal-total-sold" style="font-size: 1.15rem; font-weight: 700; color: #b91c1c; margin-top: 4px;">₹0.00</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 10px;">
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Net Orders</span>
+                        <div id="admin-modal-total-orders" style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-top: 4px;">0</div>
+                    </div>
+                </div>
+
+                <div class="table-box" style="max-height: 340px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    <table style="margin: 0; width: 100%;">
+                        <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 5;">
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-modal-history-tbody">
+                            <tr><td colspan="5" style="text-align:center; padding: 24px; color:#64748b;">Loading transactions...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('admin-share-history-modal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/admin.js"></script>
 </body>
