@@ -7,6 +7,7 @@ async function createDatabase() {
 
         // Drop tables if they exist to ensure clean creation
         console.log('🗑️  Dropping existing tables (if any)...');
+        await db.query('DROP TABLE IF EXISTS transactions');
         await db.query('DROP TABLE IF EXISTS portfolios');
         await db.query('DROP TABLE IF EXISTS users');
 
@@ -35,10 +36,26 @@ async function createDatabase() {
                 share_name VARCHAR(255) NOT NULL,
                 quantity DECIMAL(15, 2) NOT NULL,
                 buy_price DECIMAL(15, 2) NOT NULL,
+                average_buy_price DECIMAL(15, 2) NOT NULL,
                 amount_invested DECIMAL(15, 2) NOT NULL,
                 current_value DECIMAL(15, 2) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        `);
+
+        // Create transactions table
+        console.log('📦 Creating transactions table...');
+        await db.query(`
+            CREATE TABLE transactions (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                stock_symbol VARCHAR(255) NOT NULL,
+                transaction_type ENUM('BUY', 'SELL') NOT NULL,
+                quantity DECIMAL(15, 2) NOT NULL,
+                price_at_transaction DECIMAL(15, 2) NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         `);
@@ -72,21 +89,33 @@ async function createDatabase() {
 
         // Insert Portfolios for Rahul
         await db.query(
-            `INSERT INTO portfolios (user_id, share_name, quantity, buy_price, amount_invested, current_value) 
-             VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO portfolios (user_id, share_name, quantity, buy_price, average_buy_price, amount_invested, current_value) 
+             VALUES (?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?)`,
             [
-                investor1Result.insertId, 'Reliance Industries Ltd', 50, 2450.00, 122500.00, 145000.00,
-                investor1Result.insertId, 'Tata Consultancy Services', 30, 3800.00, 114000.00, 121500.00
+                investor1Result.insertId, 'Reliance Industries Ltd', 50, 2450.00, 2450.00, 122500.00, 145000.00,
+                investor1Result.insertId, 'Tata Consultancy Services', 30, 3800.00, 3800.00, 114000.00, 121500.00
             ]
         );
 
         // Insert Portfolios for Priya
         await db.query(
-            `INSERT INTO portfolios (user_id, share_name, quantity, buy_price, amount_invested, current_value) 
-             VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO portfolios (user_id, share_name, quantity, buy_price, average_buy_price, amount_invested, current_value) 
+             VALUES (?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?)`,
             [
-                investor2Result.insertId, 'HDFC Bank Ltd', 100, 1520.00, 152000.00, 165000.00,
-                investor2Result.insertId, 'Infosys Ltd', 75, 1480.00, 111000.00, 118500.00
+                investor2Result.insertId, 'HDFC Bank Ltd', 100, 1520.00, 1520.00, 152000.00, 165000.00,
+                investor2Result.insertId, 'Infosys Ltd', 75, 1480.00, 1480.00, 111000.00, 118500.00
+            ]
+        );
+
+        // Insert sample Transactions for Rahul and Priya
+        await db.query(
+            `INSERT INTO transactions (user_id, stock_symbol, transaction_type, quantity, price_at_transaction) 
+             VALUES (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?), (?, ?, 'BUY', ?, ?)`,
+            [
+                investor1Result.insertId, 'Reliance Industries Ltd', 50, 2450.00,
+                investor1Result.insertId, 'Tata Consultancy Services', 30, 3800.00,
+                investor2Result.insertId, 'HDFC Bank Ltd', 100, 1520.00,
+                investor2Result.insertId, 'Infosys Ltd', 75, 1480.00
             ]
         );
 

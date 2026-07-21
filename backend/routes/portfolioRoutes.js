@@ -7,11 +7,15 @@ const {
     addShare,
     updateShare,
     deleteShare,
-    getDashboardStats
+    getDashboardStats,
+    buyShare,
+    sellShare
 } = require('../controllers/portfolioController');
 
 // Investor route - sees own portfolio
 router.get('/my', protect, getMyPortfolio);
+router.post('/buy', protect, buyShare);
+router.post('/sell', protect, sellShare);
 
 // Admin only routes
 router.get('/', protect, adminOnly, getAllPortfolios);

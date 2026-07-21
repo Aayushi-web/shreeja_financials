@@ -1,7 +1,8 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
+const path = require('path');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Create connection pool supporting Aiven SSL and custom port
 const poolConfig = process.env.DATABASE_URL ? {

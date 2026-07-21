@@ -25,6 +25,7 @@ const investorRoutes = require('./routes/investorRoutes');
 app.use('/api/investors', investorRoutes);
 const portfolioRoutes = require('./routes/portfolioRoutes');
 app.use('/api/portfolios', portfolioRoutes);
+app.use('/api/portfolio', portfolioRoutes);
 // Test route - just to check server is working
 app.get('/', (req, res) => {
     res.json({ message: 'Portfolio API is running!' });
