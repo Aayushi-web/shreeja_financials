@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const dotenv = require('dotenv');
 const db = require('./config/db');
+const initCronJobs = require('./cron/dbKeepAlive');
 
 // Load .env file
 dotenv.config();
@@ -28,6 +29,9 @@ app.use('/api/portfolios', portfolioRoutes);
 app.get('/', (req, res) => {
     res.json({ message: 'Portfolio API is running!' });
 });
+
+// Initialize background cron jobs
+initCronJobs();
 
 // Start server
 const PORT = process.env.PORT || 5000;
