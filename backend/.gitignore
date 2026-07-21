@@ -143,5 +143,5 @@ vite.config.ts.timestamp-*
 .vite/
 
 # Lock Files
-package.lock.json
+package-lock.json
 yarn.lock
