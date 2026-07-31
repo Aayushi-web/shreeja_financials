@@ -14,7 +14,6 @@
             <nav>
                 <a href="#" class="nav-item active" onclick="showPortfolio(event)">My Portfolio</a>
                 <a href="#" class="nav-item" onclick="showAnalytics(event)">Analytics & P/L Chart</a>
-                <a href="#" class="nav-item" onclick="showHistory(event)">Transaction History</a>
                 <a href="#" class="nav-item" onclick="showProfile(event)">Profile</a>
             </nav>
             <a href="#" class="logout-btn" onclick="logout()">Logout</a>
@@ -187,46 +186,6 @@
                         <div class="canvas-container" style="height: 220px;">
                             <canvas id="rsiChart"></canvas>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="section-history" class="hidden">
-                <div class="welcome-banner" style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);">
-                    <div>
-                        <h3>Transaction History 📋</h3>
-                        <p>Complete chronological audit log of all your BUY and SELL stock orders.</p>
-                    </div>
-                    <div class="banner-icon">📑</div>
-                </div>
-
-                <div class="table-section">
-                    <div class="history-controls">
-                        <input type="text" id="filter-symbol" placeholder="Search by Stock Symbol..." oninput="filterHistoryTable()" class="history-search">
-                        <select id="filter-type" onchange="filterHistoryTable()" class="history-select">
-                            <option value="ALL">All Transactions</option>
-                            <option value="BUY">BUY Only</option>
-                            <option value="SELL">SELL Only</option>
-                        </select>
-                    </div>
-                    <div class="table-box">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <th>Stock Symbol</th>
-                                    <th>Type</th>
-                                    <th>Quantity</th>
-                                    <th>Price at Trade</th>
-                                    <th>Total Value</th>
-                                </tr>
-                            </thead>
-                            <tbody id="history-tbody">
-                                <tr>
-                                    <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">Loading transaction history...</td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </section>

@@ -65,7 +65,7 @@ async function loadCurrentUser() {
 
 // ===== NAVIGATION =====
 function hideAllSections() {
-    ['section-portfolio', 'section-analytics', 'section-history', 'section-profile'].forEach(id => {
+    ['section-portfolio', 'section-analytics', 'section-profile'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
@@ -91,14 +91,6 @@ function showAnalytics(event) {
     document.getElementById('section-analytics').classList.remove('hidden');
     document.getElementById('page-title').textContent = 'Analytics & P/L Chart';
     loadAnalytics();
-}
-
-function showHistory(event) {
-    setActiveNav(event);
-    hideAllSections();
-    document.getElementById('section-history').classList.remove('hidden');
-    document.getElementById('page-title').textContent = 'Transaction History';
-    loadHistory();
 }
 
 function showProfile(event) {
@@ -203,7 +195,6 @@ let plChartInstance = null;
 let rsiChartInstance = null;
 let currentChartData = null;
 const activeIndicators = { SMA: true, EMA: true, RSI: true };
-let allTransactions = [];
 
 async function loadAnalytics() {
     ['analytics-invested', 'analytics-current', 'analytics-unrealized', 'analytics-winrate'].forEach(id => {
@@ -390,66 +381,6 @@ function toggleIndicator(name) {
     if (currentChartData) {
         renderCharts(currentChartData);
     }
-}
-
-// ===== TRANSACTION HISTORY =====
-async function loadHistory() {
-    const tbody = document.getElementById('history-tbody');
-    if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">Loading transaction history...</td></tr>';
-    }
-
-    try {
-        allTransactions = await api('GET', '/portfolios/history');
-        renderHistoryTable(allTransactions);
-    } catch (err) {
-        console.error('Failed to load transaction history:', err);
-        if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#dc2626">${err.message || 'Error loading transactions'}</td></tr>`;
-        }
-    }
-}
-
-function filterHistoryTable() {
-    const query = document.getElementById('filter-symbol')?.value?.toLowerCase() || '';
-    const typeFilter = document.getElementById('filter-type')?.value || 'ALL';
-
-    const filtered = allTransactions.filter(t => {
-        const matchesSymbol = t.stock_symbol?.toLowerCase().includes(query);
-        const matchesType = typeFilter === 'ALL' || t.transaction_type === typeFilter;
-        return matchesSymbol && matchesType;
-    });
-
-    renderHistoryTable(filtered);
-}
-
-function renderHistoryTable(transactions) {
-    const tbody = document.getElementById('history-tbody');
-    if (!tbody) return;
-
-    if (!transactions || transactions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#888;">No transactions found</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = transactions.map(t => {
-        const badgeCls = t.transaction_type === 'BUY' ? 'badge buy' : 'badge sell';
-        const dateStr = new Date(t.timestamp).toLocaleString('en-IN', {
-            day: '2-digit', month: 'short', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-
-        return `
-            <tr>
-                <td style="color: #94a3b8; font-size: 0.9em;">${dateStr}</td>
-                <td><strong>${t.stock_symbol}</strong></td>
-                <td><span class="${badgeCls}">${t.transaction_type}</span></td>
-                <td>${t.quantity}</td>
-                <td>${formatMoney(t.price_at_transaction)}</td>
-                <td><strong>${formatMoney(t.total_value)}</strong></td>
-            </tr>
-        `;
-    }).join('');
 }
 
 // ===== LOGOUT =====
