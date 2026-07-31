@@ -327,45 +327,6 @@ function calculateRSI(data, period = 14) {
     return result;
 }
 
-// GET TRANSACTION HISTORY
-exports.getTransactionHistory = async (req, res) => {
-    try {
-        const user_id = (req.user.role === 'admin' && req.query.user_id) ? Number(req.query.user_id) : req.user.id;
-        const { stock_symbol, transaction_type } = req.query;
-
-        let sql = 'SELECT * FROM transactions WHERE user_id = ?';
-        const params = [user_id];
-
-        if (stock_symbol && stock_symbol.trim() !== '') {
-            sql += ' AND stock_symbol LIKE ?';
-            params.push(`%${stock_symbol.trim()}%`);
-        }
-        if (transaction_type && ['BUY', 'SELL'].includes(transaction_type.toUpperCase())) {
-            sql += ' AND transaction_type = ?';
-            params.push(transaction_type.toUpperCase());
-        }
-
-        sql += ' ORDER BY timestamp DESC';
-        const [rows] = await db.query(sql, params);
-
-        const formatted = rows.map(r => ({
-            id: r.id,
-            user_id: r.user_id,
-            stock_symbol: r.stock_symbol,
-            transaction_type: r.transaction_type,
-            quantity: Number(r.quantity),
-            price_at_transaction: Number(r.price_at_transaction),
-            total_value: Number((Number(r.quantity) * Number(r.price_at_transaction)).toFixed(2)),
-            timestamp: r.timestamp
-        }));
-
-        res.status(200).json(formatted);
-    } catch (err) {
-        console.error('Error fetching transaction history:', err);
-        res.status(500).json({ message: 'Server error retrieving transaction history', error: err.message });
-    }
-};
-
 // GET PORTFOLIO ANALYTICS (P/L & Indicators)
 exports.getPortfolioAnalytics = async (req, res) => {
     try {

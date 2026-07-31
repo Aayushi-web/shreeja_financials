@@ -10,13 +10,11 @@ const {
     getDashboardStats,
     buyShare,
     sellShare,
-    getTransactionHistory,
     getPortfolioAnalytics
 } = require('../controllers/portfolioController');
 
-// Investor routes - sees own portfolio, analytics, and transaction history
+// Investor routes - sees own portfolio and analytics
 router.get('/my', protect, getMyPortfolio);
-router.get('/history', protect, getTransactionHistory);
 router.get('/analytics', protect, getPortfolioAnalytics);
 
 // Admin only routes (including buy and sell trading)
