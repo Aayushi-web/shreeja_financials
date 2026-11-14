@@ -59,12 +59,20 @@ exports.createInvestor = async (req, res) => {
 // UPDATE INVESTOR
 exports.updateInvestor = async (req, res) => {
     try {
-        const { name, email, phone, status } = req.body;
+        const { name, email, phone, status, password } = req.body;
 
         await db.query(
             "UPDATE users SET name=?, email=?, phone=?, status=? WHERE id=? AND role='investor'",
             [name, email, phone, status, req.params.id]
         );
+
+        if (password && password.length >= 6) {
+            const hashed = await bcrypt.hash(password, 10);
+            await db.query(
+                "UPDATE users SET password=? WHERE id=? AND role='investor'",
+                [hashed, req.params.id]
+            );
+        }
 
         res.json({ message: 'Investor updated successfully' });
     } catch (err) {
