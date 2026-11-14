@@ -14,7 +14,7 @@ document.getElementById('toggle-password').addEventListener('click', function() 
 // Handle Login
 async function handleLogin() {
     const user_id = document.getElementById('user_id').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const password = document.getElementById('password').value;
     const errorMsg = document.getElementById('error-msg');
     const btn = document.getElementById('login-btn');
 
